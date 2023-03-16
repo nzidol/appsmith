@@ -164,6 +164,9 @@ import CodeScannerWidget, {
 import ListWidgetV2, {
   CONFIG as LIST_WIDGET_CONFIG_V2,
 } from "widgets/ListWidgetV2";
+import LeafletWidget, {
+  CONFIG as LEAFLET_WIDGET_CONFIG,
+} from "widgets/LeafletWidget";
 
 export const ALL_WIDGETS_AND_CONFIG: [any, WidgetConfiguration][] = [
   [CanvasWidget, CANVAS_WIDGET_CONFIG],

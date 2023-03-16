@@ -1,0 +1,216 @@
+import React from "react";
+import BaseWidget, { WidgetProps, WidgetState } from "widgets/BaseWidget";
+import { WidgetType } from "constants/WidgetConstants";
+import LeafletComponent from "../component";
+
+import { DerivedPropertiesMap } from "utils/WidgetFactory";
+import { DEFAULT_CENTER } from "constants/WidgetConstants";
+import { EventType } from "constants/AppsmithActionConstants/ActionConstants";
+import { MarkerProps } from "../constants";
+import styleConfig from "./styleConfig";
+import contentConfig from "./contentConfig";
+
+const DefaultCenter = { ...DEFAULT_CENTER, long: DEFAULT_CENTER.lng };
+
+type Center = {
+  lat: number;
+  long: number;
+  [x: string]: any;
+};
+
+class LeafletWidget extends BaseWidget<LeafletWidgetProps, WidgetState> {
+  static getPropertyPaneConfig() {
+    return contentConfig.concat(styleConfig);
+  }
+  static getPropertyPaneContentConfig() {
+    return contentConfig;
+  }
+  static getPropertyPaneStyleConfig() {
+    return styleConfig;
+  }
+
+  static getDefaultPropertiesMap(): Record<string, string> {
+    return {
+      markers: "defaultMarkers",
+      center: "mapCenter",
+      tiles: "url",
+    };
+  }
+  static getMetaPropertiesMap(): Record<string, any> {
+    return {
+      center: undefined,
+      markers: undefined,
+      selectedMarker: undefined,
+    };
+  }
+  static getDerivedPropertiesMap(): DerivedPropertiesMap {
+    return {};
+  }
+
+  getCenter(): Center {
+    return this.props.center || this.props.mapCenter || DefaultCenter;
+  }
+  onCreateMarker = (lat: number, long: number) => {
+    this.disableDrag(true);
+    const marker = { lat, long, title: "" };
+
+    const markers = [];
+    if (this.props.enableReplaceMarker) {
+      if (this.props.defaultMarkers != undefined)
+        marker.title = this.props.defaultMarkers[0].popupText
+          ? this.props.defaultMarkers[0].popupText
+          : "";
+      markers.push(marker);
+    } else {
+      (this.props.markers || []).forEach((m: MarkerProps) => {
+        markers.push(m);
+      });
+      markers.push(marker);
+    }
+    this.props.updateWidgetMetaProperty("markers", markers);
+    this.props.updateWidgetMetaProperty("selectedMarker", marker, {
+      triggerPropertyName: "onCreateMarker",
+      dynamicString: this.props.onCreateMarker,
+      event: {
+        type: EventType.ON_CREATE_MARKER,
+      },
+    });
+  };
+  onMarkerClick = (lat: number, long: number, title: string) => {
+    this.disableDrag(true);
+    const selectedMarker = {
+      lat: lat,
+      long: long,
+      title: title,
+    };
+    this.props.updateWidgetMetaProperty("selectedMarker", selectedMarker, {
+      triggerPropertyName: "onMarkerClick",
+      dynamicString: this.props.onMarkerClick,
+      event: {
+        type: EventType.ON_MARKER_CLICK,
+      },
+    });
+  };
+  unselectMarker = () => {
+    this.props.updateWidgetMetaProperty("selectedMarker", undefined);
+  };
+  updateCenter = (lat: number, long: number, title?: string) => {
+    this.props.updateWidgetMetaProperty("center", { lat, long, title });
+  };
+  updateMarker = (lat: number, long: number, index: number) => {
+    const markers: Array<MarkerProps> = [...(this.props.markers || [])].map(
+      (marker, i) => {
+        if (index === i) {
+          marker = { lat, long };
+        }
+        return marker;
+      },
+    );
+    this.disableDrag(false);
+    this.props.updateWidgetMetaProperty("markers", markers);
+  };
+
+  componentDidUpdate(prevProps: LeafletWidgetProps) {
+    //remove selectedMarker when map initial location is updated
+    if (
+      JSON.stringify(prevProps.center) !== JSON.stringify(this.props.center) &&
+      this.props.selectedMarker
+    ) {
+      this.unselectMarker();
+    }
+
+    // If initial location was changed
+    if (
+      JSON.stringify(prevProps.mapCenter) !==
+      JSON.stringify(this.props.mapCenter)
+    ) {
+      this.props.updateWidgetMetaProperty("center", this.props.mapCenter);
+      return;
+    }
+
+    // If markers were changed
+    if (
+      this.props.markers &&
+      this.props.markers.length > 0 &&
+      JSON.stringify(prevProps.markers) !== JSON.stringify(this.props.markers)
+    ) {
+      this.props.updateWidgetMetaProperty(
+        "center",
+        this.props.markers[this.props.markers.length - 1],
+      );
+    }
+  }
+
+  getPageView() {
+    return (
+      <LeafletComponent
+        allowZoom={this.props.allowZoom}
+        attribution={this.props.attribution}
+        borderRadius={this.props.borderRadius}
+        boxShadow={this.props.boxShadow}
+        center={this.getCenter()}
+        // circles
+        circles={this.props.circles}
+        clickedMarkerCentered={this.props.clickedMarkerCentered}
+        defaultMarkers={this.props.defaultMarkers}
+        enableCreateMarker={this.props.enableCreateMarker}
+        enableDrag={this.props.enableDrag}
+        enablePickLocation={false}
+        enableReplaceMarker={this.props.enableReplaceMarker}
+        lat={this.props.lat}
+        long={this.props.long}
+        mapCenter={this.getCenter()}
+        markerText={this.props.markerText}
+        markers={this.props.markers}
+        //markers
+        saveMarker={this.onCreateMarker}
+        selectMarker={this.onMarkerClick}
+        selectedMarker={this.props.selectedMarker}
+        unselectMarker={this.unselectMarker}
+        updateCenter={this.updateCenter}
+        updateMarker={this.updateMarker}
+        url={this.props.url}
+        widgetId={this.props.widgetId}
+        zoom={this.props.zoom}
+      />
+    );
+  }
+
+  static getWidgetType(): WidgetType {
+    return "LEAFLET_WIDGET";
+  }
+}
+
+export interface LeafletWidgetProps extends WidgetProps {
+  isDisabled?: boolean;
+  isVisible?: boolean;
+  lat: number;
+  long: number;
+  zoom: number;
+  url: string;
+  allowZoom: boolean;
+  markerText: string;
+  mapCenter: {
+    lat: number;
+    long: number;
+    title?: string;
+  };
+  center?: {
+    lat: number;
+    long: number;
+  };
+  defaultMarkers?: Array<MarkerProps>;
+  markers?: Array<MarkerProps>;
+  selectedMarker?: {
+    lat: number;
+    long: number;
+    title?: string;
+    color?: string;
+  };
+  onMarkerClick?: string;
+  onCreateMarker?: string;
+  borderRadius: string;
+  boxShadow?: string;
+}
+
+export default LeafletWidget;
