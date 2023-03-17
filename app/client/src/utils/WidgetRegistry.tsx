@@ -218,6 +218,7 @@ export const ALL_WIDGETS_AND_CONFIG: [any, WidgetConfiguration][] = [
   [CategorySliderWidget, CATEGORY_SLIDER_WIDGET_CONFIG],
   [CodeScannerWidget, CODE_SCANNER_WIDGET_CONFIG],
   [ListWidgetV2, LIST_WIDGET_CONFIG_V2],
+  [LeafletWidget, LEAFLET_WIDGET_CONFIG],
 
   //Deprecated Widgets
   [InputWidget, INPUT_WIDGET_CONFIG],
