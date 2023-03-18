@@ -209,8 +209,8 @@ export default [
                     ],
                   },
                 ],
-              }
-            }
+              },
+            },
           },
         },
         evaluationSubstitutionType: EvaluationSubstitutionType.SMART_SUBSTITUTE,
@@ -249,7 +249,7 @@ export default [
                       {
                         name: "color",
                         type: ValidationTypes.TEXT,
-                      }
+                      },
                     ],
                   },
                 ],

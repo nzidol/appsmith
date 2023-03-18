@@ -11,12 +11,17 @@ import {
   useMapEvents,
   Circle,
   Polyline,
-  Polygon
+  Polygon,
 } from "react-leaflet";
 
 import markerIconPng from "leaflet/dist/images/marker-icon.png";
 import { Icon, LatLngExpression } from "leaflet";
-import { CircleProps, MarkerProps, PolygonProps, LineProps } from "../constants";
+import {
+  CircleProps,
+  MarkerProps,
+  PolygonProps,
+  LineProps,
+} from "../constants";
 
 export interface LeafletComponentProps {
   lat: number;
@@ -197,22 +202,28 @@ const MyLeafLetComponent = (props: any) => {
         ))}
       {Array.isArray(props.lines) &&
         props.lines.map((line: LineProps, index: number) => (
-          <Polyline 
+          <Polyline
             key={index}
             pathOptions={{
-              color: line.options?.color ? line.options.color : "red"
+              color: line.options?.color ? line.options.color : "red",
             }}
-            positions = {line.positions || [ [51.505, -0.09], [51.51, -0.1],  [51.51, -0.12]] }
+            positions={
+              line.positions || [
+                [51.505, -0.09],
+                [51.51, -0.1],
+                [51.51, -0.12],
+              ]
+            }
           />
         ))}
-        {Array.isArray(props.polygons) &&
+      {Array.isArray(props.polygons) &&
         props.polygons.map((polygon: PolygonProps, index: number) => (
           <Polygon
             key={index}
             pathOptions={{
-              color: polygon.options?.color ? polygon.options.color : "purple"
+              color: polygon.options?.color ? polygon.options.color : "purple",
             }}
-            positions = {polygon.positions}
+            positions={polygon.positions}
           />
         ))}
       <AddMarker {...props} />

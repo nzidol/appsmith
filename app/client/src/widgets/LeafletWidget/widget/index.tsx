@@ -18,7 +18,6 @@ type Center = {
   [x: string]: any;
 };
 
-
 class LeafletWidget extends BaseWidget<LeafletWidgetProps, WidgetState> {
   static getPropertyPaneConfig() {
     return contentConfig.concat(styleConfig);
