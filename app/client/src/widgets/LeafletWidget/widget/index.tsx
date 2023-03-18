@@ -149,7 +149,6 @@ class LeafletWidget extends BaseWidget<LeafletWidgetProps, WidgetState> {
         borderRadius={this.props.borderRadius}
         boxShadow={this.props.boxShadow}
         center={this.getCenter()}
-        // circles
         circles={this.props.circles}
         clickedMarkerCentered={this.props.clickedMarkerCentered}
         defaultMarkers={this.props.defaultMarkers}
@@ -157,6 +156,7 @@ class LeafletWidget extends BaseWidget<LeafletWidgetProps, WidgetState> {
         enableDrag={this.props.enableDrag}
         enablePickLocation={false}
         enableReplaceMarker={this.props.enableReplaceMarker}
+        geoJSON={this.props.geoJSON}
         lat={this.props.lat}
         lines={this.props.lines}
         long={this.props.long}
@@ -164,7 +164,6 @@ class LeafletWidget extends BaseWidget<LeafletWidgetProps, WidgetState> {
         markerText={this.props.markerText}
         markers={this.props.markers}
         polygons={this.props.polygons}
-        //markers
         saveMarker={this.onCreateMarker}
         selectMarker={this.onMarkerClick}
         selectedMarker={this.props.selectedMarker}
