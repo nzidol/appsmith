@@ -12,6 +12,8 @@ import {
   Circle,
   Polyline,
   Polygon,
+  GeoJSON,
+  GeoJSONProps,
 } from "react-leaflet";
 
 import markerIconPng from "leaflet/dist/images/marker-icon.png";
@@ -43,6 +45,7 @@ export interface LeafletComponentProps {
     long: number;
   };
   defaultMarkers?: Array<MarkerProps>;
+  geoJSON?: Array<GeoJSONProps>;
   markers?: Array<MarkerProps>;
   circles?: Array<CircleProps>;
   lines?: Array<LineProps>;
@@ -224,6 +227,23 @@ const MyLeafLetComponent = (props: any) => {
               color: polygon.options?.color ? polygon.options.color : "purple",
             }}
             positions={polygon.positions}
+          />
+        ))}
+      {Array.isArray(props.geoJSON) &&
+        props.geoJSON.map((geoJSON: GeoJSONProps, index: number) => (
+          <GeoJSON
+            data={geoJSON.data}
+            key={index}
+            style={
+              geoJSON.style
+                ? geoJSON.style
+                : () => ({
+                    color: "#4a83ec",
+                    weight: 0.5,
+                    fillColor: "#1a1d62",
+                    fillOpacity: 1,
+                  })
+            }
           />
         ))}
       <AddMarker {...props} />

@@ -312,6 +312,64 @@ export default [
         evaluationSubstitutionType: EvaluationSubstitutionType.SMART_SUBSTITUTE,
       },
       {
+        propertyName: "geoJSON",
+        label: "GeoJSON features to draw on Map",
+        controlType: "INPUT_TEXT",
+        inputType: "ARRAY",
+        helpText: "Draws GeoJSON features on the map",
+        default:
+          '[{"data":[[51.515, -0.09],[51.52, -0.1],[51.52, -0.12]], "style": {() => ({color: "#4a83ec", weight: 0.5, fillColor: "#1a1d62", fillOpacity: 1})}}]',
+        placeholderText:
+          '[{"data":[["val1","val2"], []...], "style:"{() => ({color: "val", weight: "val", fillColor: "val", fillOpacity: "val" })}}]',
+        isBindProperty: true,
+        isTriggerProperty: false,
+        validation: {
+          type: ValidationTypes.ARRAY,
+          params: {
+            children: {
+              type: ValidationTypes.OBJECT,
+              params: {
+                required: true,
+                allowedKeys: [
+                  {
+                    name: "data",
+                    type: ValidationTypes.ARRAY,
+                    params: {
+                      required: true,
+                      children: {
+                        type: ValidationTypes.OBJECT,
+                        params: {
+                          required: true,
+                          allowedKeys: [
+                            {
+                              name: "type",
+                              type: ValidationTypes.TEXT,
+                            },
+                            {
+                              name: "properties",
+                              type: ValidationTypes.OBJECT,
+                            },
+                            {
+                              name: "coordinates",
+                              type: ValidationTypes.ARRAY,
+                            },
+                          ],
+                        },
+                      },
+                    },
+                  },
+                  {
+                    name: "style",
+                    type: ValidationTypes.TEXT,
+                  },
+                ],
+              },
+            },
+          },
+        },
+        evaluationSubstitutionType: EvaluationSubstitutionType.SMART_SUBSTITUTE,
+      },
+      {
         propertyName: "isVisible",
         label: "Visible",
         helpText: "Controls the visibility of the widget",
