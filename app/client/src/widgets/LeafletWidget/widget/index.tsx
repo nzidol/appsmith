@@ -18,6 +18,7 @@ type Center = {
   [x: string]: any;
 };
 
+
 class LeafletWidget extends BaseWidget<LeafletWidgetProps, WidgetState> {
   static getPropertyPaneConfig() {
     return contentConfig.concat(styleConfig);
@@ -158,10 +159,12 @@ class LeafletWidget extends BaseWidget<LeafletWidgetProps, WidgetState> {
         enablePickLocation={false}
         enableReplaceMarker={this.props.enableReplaceMarker}
         lat={this.props.lat}
+        lines={this.props.lines}
         long={this.props.long}
         mapCenter={this.getCenter()}
         markerText={this.props.markerText}
         markers={this.props.markers}
+        polygons={this.props.polygons}
         //markers
         saveMarker={this.onCreateMarker}
         selectMarker={this.onMarkerClick}

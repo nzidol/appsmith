@@ -1,3 +1,5 @@
+import { LatLngExpression } from "leaflet";
+
 // This file contains common constants which can be used across the widget configuration file (index.ts), widget and component folders.
 export const LEAFLET_WIDGET_CONSTANT = "";
 export interface MarkerProps {
@@ -19,8 +21,18 @@ export interface CircleOptions {
   fillColor?: string;
 }
 export interface PolygonProps {
-  path: [];
-  title?: string;
-  description?: string;
+  positions: [];
+  options?: PolygonOptions;
+}
+export interface PolygonOptions {
   color?: string;
+  fillColor?: string;
+}
+export interface LineProps {
+  positions: [];
+  options?: LineOptions;
+}
+export interface LineOptions {
+  color?: string;
+  fillColor?: string;
 }

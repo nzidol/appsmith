@@ -209,6 +209,50 @@ export default [
                     ],
                   },
                 ],
+              }
+            }
+          },
+        },
+        evaluationSubstitutionType: EvaluationSubstitutionType.SMART_SUBSTITUTE,
+      },
+      {
+        propertyName: "lines",
+        label: "Lines to draw on Map",
+        controlType: "INPUT_TEXT",
+        inputType: "ARRAY",
+        helpText: "Draws lines on the map",
+        default:
+          '[{"positions":[[51.505, -0.09],[51.51, -0.1],[51.51, -0.12],], "options": {"color":"green"}}]',
+        placeholderText:
+          '[{"positions":[["val1","val2"],[]...], "options:"{"color":"val3","fillColor":"val4", "title":"val5"}}]',
+        isBindProperty: true,
+        isTriggerProperty: false,
+        validation: {
+          type: ValidationTypes.ARRAY,
+          params: {
+            children: {
+              type: ValidationTypes.OBJECT,
+              params: {
+                required: true,
+                allowedKeys: [
+                  {
+                    name: "positions",
+                    type: ValidationTypes.ARRAY,
+                    params: {
+                      required: true,
+                    },
+                  },
+                  {
+                    name: "options",
+                    type: ValidationTypes.OBJECT,
+                    allowedKeys: [
+                      {
+                        name: "color",
+                        type: ValidationTypes.TEXT,
+                      }
+                    ],
+                  },
+                ],
               },
             },
           },
@@ -222,9 +266,9 @@ export default [
         inputType: "ARRAY",
         helpText: "Draws polygons on the map",
         default:
-          '[{"lat": 51.505, "long": -0.0755, "options": {"color":"green","fillColor":"green", "title":"Tower Bridge"}}]',
+          '[{"positions":[[51.515, -0.09],[51.52, -0.1],[51.52, -0.12]], "options": {"color":"green","fillColor":"green", "title":"Tower Bridge"}}]',
         placeholderText:
-          '[{ ["lat": "val1", "long": "val2"], "options:"{"color":"val3","fillColor":"val4", "title":"val5"}}]',
+          '[{"positions":[["val1","val2"], []...], "options:"{"color":"val3"}}]',
         isBindProperty: true,
         isTriggerProperty: false,
         validation: {
@@ -236,22 +280,9 @@ export default [
                 required: true,
                 allowedKeys: [
                   {
-                    name: "lat",
-                    type: ValidationTypes.NUMBER,
+                    name: "positions",
+                    type: ValidationTypes.ARRAY,
                     params: {
-                      min: -90,
-                      max: 90,
-                      default: 0,
-                      required: true,
-                    },
-                  },
-                  {
-                    name: "long",
-                    type: ValidationTypes.NUMBER,
-                    params: {
-                      min: -180,
-                      max: 180,
-                      default: 0,
                       required: true,
                     },
                   },
