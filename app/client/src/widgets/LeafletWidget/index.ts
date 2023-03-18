@@ -15,6 +15,7 @@ export const CONFIG = {
     columns: 60,
     version: 1,
     mapCenter: { lat: 51.505, long: -0.09 },
+    circles : '[{"lat": 51.505, "long": -0.0755, "radius": 200, "title":"Tower Bridge", "options": {"color":"green","fillColor":"green"}}]',
     url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
     attribution:
       "&copy; <a href='https://www.openstreetmap.org/copyright'>OpenStreetMap</a> contributors",

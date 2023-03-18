@@ -147,7 +147,7 @@ export default [
         inputType: "ARRAY",
         helpText: "Draws circles on the map",
         default:
-          '[{"lat": 51.505, "long": -0.0755, "radius": 200, "options": {"color":"green","fillColor":"green", "title":"Tower Bridge"}}]',
+          '[{"lat": 51.505, "long": -0.0755, "radius": 200, "title":"Tower Bridge", "options": {"color":"green","fillColor":"green"}}]',
         placeholderText:
           '[{ ["lat": "val1", "long": "val2"], "options:"{"radius":"val3"}}]',
         isBindProperty: true,
@@ -187,6 +187,71 @@ export default [
                       min: 0,
                       max: 1000000,
                       default: 200,
+                      required: true,
+                    },
+                  },
+                  {
+                    name: "options",
+                    type: ValidationTypes.OBJECT,
+                    allowedKeys: [
+                      {
+                        name: "title",
+                        type: ValidationTypes.TEXT,
+                      },
+                      {
+                        name: "color",
+                        type: ValidationTypes.TEXT,
+                      },
+                      {
+                        name: "fillColor",
+                        type: ValidationTypes.TEXT,
+                      },
+                    ],
+                  },
+                ],
+              },
+            },
+          },
+        },
+        evaluationSubstitutionType: EvaluationSubstitutionType.SMART_SUBSTITUTE,
+      },
+      {
+        propertyName: "polygons",
+        label: "Polygons to draw on Map",
+        controlType: "INPUT_TEXT",
+        inputType: "ARRAY",
+        helpText: "Draws polygons on the map",
+        default:
+          '[{"lat": 51.505, "long": -0.0755, "options": {"color":"green","fillColor":"green", "title":"Tower Bridge"}}]',
+        placeholderText:
+          '[{ ["lat": "val1", "long": "val2"], "options:"{"color":"val3","fillColor":"val4", "title":"val5"}}]',
+        isBindProperty: true,
+        isTriggerProperty: false,
+        validation: {
+          type: ValidationTypes.ARRAY,
+          params: {
+            children: {
+              type: ValidationTypes.OBJECT,
+              params: {
+                required: true,
+                allowedKeys: [
+                  {
+                    name: "lat",
+                    type: ValidationTypes.NUMBER,
+                    params: {
+                      min: -90,
+                      max: 90,
+                      default: 0,
+                      required: true,
+                    },
+                  },
+                  {
+                    name: "long",
+                    type: ValidationTypes.NUMBER,
+                    params: {
+                      min: -180,
+                      max: 180,
+                      default: 0,
                       required: true,
                     },
                   },
