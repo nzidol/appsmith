@@ -147,6 +147,8 @@ const MyLeafLetComponent = (props: any) => {
       setMapCenter({
         ...props.center,
         lng: props.center.long,
+        title: props.markerText ? props.markerText : "",
+        descroption: props.description ? props.description : "",
       });
     }
   }, [props.center, props.selectedMarker]);
@@ -238,9 +240,9 @@ const MyLeafLetComponent = (props: any) => {
               geoJSON.style
                 ? geoJSON.style
                 : () => ({
-                    color: "#4a83ec",
+                    color: "blue",
                     weight: 0.5,
-                    fillColor: "#1a1d62",
+                    fillColor: "lightblue",
                     fillOpacity: 1,
                   })
             }

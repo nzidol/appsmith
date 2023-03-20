@@ -9,6 +9,7 @@ import { EventType } from "constants/AppsmithActionConstants/ActionConstants";
 import { MarkerProps } from "../constants";
 import styleConfig from "./styleConfig";
 import contentConfig from "./contentConfig";
+import { Stylesheet } from "entities/AppTheming";
 
 const DefaultCenter = { ...DEFAULT_CENTER, long: DEFAULT_CENTER.lng };
 
@@ -45,6 +46,13 @@ class LeafletWidget extends BaseWidget<LeafletWidgetProps, WidgetState> {
   }
   static getDerivedPropertiesMap(): DerivedPropertiesMap {
     return {};
+  }
+
+  static getStylesheetConfig(): Stylesheet {
+    return {
+      borderRadius: "{{appsmith.theme.borderRadius.appBorderRadius}}",
+      boxShadow: "{{appsmith.theme.boxShadow.appBoxShadow}}",
+    };
   }
 
   getCenter(): Center {
