@@ -124,7 +124,7 @@ function AddMarker(props: LeafletComponentProps) {
       }
       position={position}
     >
-      <Popup>You are here</Popup>
+      <Popup>{props.markerText}</Popup>
     </Marker>
   );
 }
