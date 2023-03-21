@@ -14,6 +14,7 @@ import {
   Polygon,
   GeoJSON,
   GeoJSONProps,
+  LayersControl,
 } from "react-leaflet";
 
 import markerIconPng from "leaflet/dist/images/marker-icon.png";
@@ -63,7 +64,7 @@ export interface LeafletComponentProps {
   clickedMarkerCentered?: boolean;
   updateCenter: (lat: number, long: number) => void;
   updateMarker: (lat: number, long: number, index: number) => void;
-  saveMarker: (lat: number, long: number) => void;
+  saveMarker: (lat: number, long: number, title: string) => void;
   selectMarker: (lat: number, long: number, title: string) => void;
   unselectMarker: () => void;
   borderRadius: string;
@@ -104,12 +105,14 @@ function AddMarker(props: LeafletComponentProps) {
   ] as LatLngExpression);
   const map = useMapEvents({
     click(e) {
+      setPopupText(e.latlng.lat.toString() + " " + e.latlng.lng.toString());
       if (props.enableCreateMarker) {
-        props.saveMarker(e.latlng.lat, e.latlng.lng);
+        props.saveMarker(e.latlng.lat, e.latlng.lng, popupText);
       }
       setPosition(e.latlng);
     },
   });
+  const [popupText, setPopupText] = useState(props.markerText);
 
   map.flyTo(position, props.zoom);
 
@@ -124,7 +127,7 @@ function AddMarker(props: LeafletComponentProps) {
       }
       position={position}
     >
-      <Popup>{props.markerText}</Popup>
+      <Popup>{popupText}</Popup>
     </Marker>
   );
 }
@@ -148,7 +151,7 @@ const MyLeafLetComponent = (props: any) => {
         ...props.center,
         lng: props.center.long,
         title: props.markerText ? props.markerText : "",
-        descroption: props.description ? props.description : "",
+        description: props.description ? props.description : "",
       });
     }
   }, [props.center, props.selectedMarker]);
@@ -161,94 +164,112 @@ const MyLeafLetComponent = (props: any) => {
       zoomControl={props.allowZoom}
     >
       <TileLayer attribution={props.attribution} url={props.url} />
-      {Array.isArray(props.markers) &&
-        props.markers.map((marker: MarkerProps, index: number) => (
-          <Marker
-            eventHandlers={{
-              click: () => {
-                if (props.clickedMarkerCentered) {
-                  setMapCenter({
-                    ...marker,
-                    lng: marker.long,
-                  });
-                }
-                props.selectMarker(marker.lat, marker.long, marker.popupText);
-              },
-            }}
-            icon={
-              new Icon({
-                iconUrl: markerIconPng,
-                iconSize: [25, 41],
-                iconAnchor: [12, 41],
-              })
-            }
-            key={index}
-            position={[Number(marker.lat), Number(marker.long)]}
-            title={marker.popupText}
-          >
-            <Popup>{marker.popupText}</Popup>
-          </Marker>
-        ))}
-      {Array.isArray(props.circles) &&
-        props.circles.map((circle: CircleProps, index: number) => (
-          <Circle
-            center={[Number(circle.lat), Number(circle.long)]}
-            key={index}
-            pathOptions={{
-              color: circle.options?.color ? circle.options.color : "red",
-              fillColor: circle.options?.fillColor
-                ? circle.options.fillColor
-                : "red",
-            }}
-            radius={circle.radius ? circle.radius : 100}
-          >
-            <Popup>{circle.title ? circle.title : ""}</Popup>
-          </Circle>
-        ))}
-      {Array.isArray(props.lines) &&
-        props.lines.map((line: LineProps, index: number) => (
-          <Polyline
-            key={index}
-            pathOptions={{
-              color: line.options?.color ? line.options.color : "red",
-            }}
-            positions={
-              line.positions || [
-                [51.505, -0.09],
-                [51.51, -0.1],
-                [51.51, -0.12],
-              ]
-            }
-          />
-        ))}
-      {Array.isArray(props.polygons) &&
-        props.polygons.map((polygon: PolygonProps, index: number) => (
-          <Polygon
-            key={index}
-            pathOptions={{
-              color: polygon.options?.color ? polygon.options.color : "purple",
-            }}
-            positions={polygon.positions}
-          />
-        ))}
-      {Array.isArray(props.geoJSON) &&
-        props.geoJSON.map((geoJSON: GeoJSONProps, index: number) => (
-          <GeoJSON
-            data={geoJSON.data}
-            key={index}
-            style={
-              geoJSON.style
-                ? geoJSON.style
-                : () => ({
-                    color: "blue",
-                    weight: 0.5,
-                    fillColor: "lightblue",
-                    fillOpacity: 1,
+      <LayersControl position="topright">
+        <LayersControl.Overlay checked name="Marker with popup">
+          {Array.isArray(props.markers) &&
+            props.markers.map((marker: MarkerProps, index: number) => (
+              <Marker
+                eventHandlers={{
+                  click: () => {
+                    if (props.clickedMarkerCentered) {
+                      setMapCenter({
+                        ...marker,
+                        lng: marker.long,
+                      });
+                    }
+                    props.selectMarker(
+                      marker.lat,
+                      marker.long,
+                      marker.popupText,
+                    );
+                  },
+                }}
+                icon={
+                  new Icon({
+                    iconUrl: markerIconPng,
+                    iconSize: [25, 41],
+                    iconAnchor: [12, 41],
                   })
-            }
-          />
-        ))}
-      <AddMarker {...props} />
+                }
+                key={index}
+                position={[Number(marker.lat), Number(marker.long)]}
+                title={marker.popupText}
+              >
+                <Popup>{marker.popupText}</Popup>
+              </Marker>
+            ))}
+          <AddMarker {...props} />
+        </LayersControl.Overlay>
+        <LayersControl.Overlay checked name="Circles">
+          {Array.isArray(props.circles) &&
+            props.circles.map((circle: CircleProps, index: number) => (
+              <Circle
+                center={[Number(circle.lat), Number(circle.long)]}
+                key={index}
+                pathOptions={{
+                  color: circle.options?.color ? circle.options.color : "red",
+                  fillColor: circle.options?.fillColor
+                    ? circle.options.fillColor
+                    : "red",
+                }}
+                radius={circle.radius ? circle.radius : 100}
+              >
+                <Popup>{circle.title ? circle.title : ""}</Popup>
+              </Circle>
+            ))}
+        </LayersControl.Overlay>
+        <LayersControl.Overlay checked name="Lines">
+          {Array.isArray(props.lines) &&
+            props.lines.map((line: LineProps, index: number) => (
+              <Polyline
+                key={index}
+                pathOptions={{
+                  color: line.options?.color ? line.options.color : "red",
+                }}
+                positions={
+                  line.positions || [
+                    [51.505, -0.09],
+                    [51.51, -0.1],
+                    [51.51, -0.12],
+                  ]
+                }
+              />
+            ))}
+        </LayersControl.Overlay>
+        <LayersControl.Overlay checked name="polygons">
+          {Array.isArray(props.polygons) &&
+            props.polygons.map((polygon: PolygonProps, index: number) => (
+              <Polygon
+                key={index}
+                pathOptions={{
+                  color: polygon.options?.color
+                    ? polygon.options.color
+                    : "purple",
+                }}
+                positions={polygon.positions}
+              />
+            ))}
+        </LayersControl.Overlay>
+        <LayersControl.Overlay checked name="geoJson">
+          {Array.isArray(props.geoJSON) &&
+            props.geoJSON.map((geoJSON: GeoJSONProps, index: number) => (
+              <GeoJSON
+                data={geoJSON.data}
+                key={index}
+                style={
+                  geoJSON.style
+                    ? geoJSON.style
+                    : () => ({
+                        color: "blue",
+                        weight: 0.5,
+                        fillColor: "lightblue",
+                        fillOpacity: 0.2,
+                      })
+                }
+              />
+            ))}
+        </LayersControl.Overlay>
+      </LayersControl>
     </MapContainer>
   );
 };
