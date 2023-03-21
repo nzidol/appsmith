@@ -2,6 +2,7 @@ import { Colors } from "constants/Colors";
 import React, { useEffect, useMemo, useState } from "react";
 import styled from "styled-components";
 import "leaflet/dist/leaflet.css";
+import "leaflet-draw/dist/leaflet.draw.css";
 
 import {
   MapContainer,
@@ -15,10 +16,14 @@ import {
   GeoJSON,
   GeoJSONProps,
   LayersControl,
+  FeatureGroup,
 } from "react-leaflet";
 
+import { EditControl } from "react-leaflet-draw";
 import markerIconPng from "leaflet/dist/images/marker-icon.png";
+import markerShadowPng from "leaflet/dist/images/marker-shadow.png";
 import { Icon, LatLngExpression } from "leaflet";
+const L = window["L"];
 import {
   CircleProps,
   MarkerProps,
@@ -71,6 +76,13 @@ export interface LeafletComponentProps {
   boxShadow?: string;
   widgetId: string;
 }
+
+L.Icon.Default.prototype.options = {
+  iconUrl: markerIconPng,
+  shadowUrl: markerShadowPng,
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+};
 
 const LeafletContainerWrapper = styled.div`
   width: 100%;
@@ -155,6 +167,9 @@ const MyLeafLetComponent = (props: any) => {
       });
     }
   }, [props.center, props.selectedMarker]);
+
+  const _created = (e: any) => console.log(e);
+
   return (
     <MapContainer
       center={mapCenter}
@@ -163,6 +178,13 @@ const MyLeafLetComponent = (props: any) => {
       zoom={props.zoom}
       zoomControl={props.allowZoom}
     >
+      <FeatureGroup>
+        <EditControl
+          draw={{ marker: false }}
+          onCreated={_created}
+          position="topright"
+        />
+      </FeatureGroup>
       <TileLayer attribution={props.attribution} url={props.url} />
       <LayersControl position="topright">
         <LayersControl.Overlay checked name="Marker with popup">
