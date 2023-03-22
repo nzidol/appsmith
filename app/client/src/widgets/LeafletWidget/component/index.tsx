@@ -17,6 +17,7 @@ import {
   GeoJSONProps,
   LayersControl,
   FeatureGroup,
+  useMap,
 } from "react-leaflet";
 
 import { EditControl } from "react-leaflet-draw";
@@ -170,6 +171,12 @@ const MyLeafLetComponent = (props: any) => {
 
   const _created = (e: any) => console.log(e);
 
+  function GetBounds() {
+    const map = useMap();
+    console.log("map bounds", map.getBounds());
+    return null;
+  }
+
   return (
     <MapContainer
       center={mapCenter}
@@ -178,6 +185,7 @@ const MyLeafLetComponent = (props: any) => {
       zoom={props.zoom}
       zoomControl={props.allowZoom}
     >
+      <GetBounds />
       <FeatureGroup>
         <EditControl
           draw={{ marker: false }}
@@ -185,8 +193,35 @@ const MyLeafLetComponent = (props: any) => {
           position="topright"
         />
       </FeatureGroup>
-      <TileLayer attribution={props.attribution} url={props.url} />
-      <LayersControl position="topright">
+      <LayersControl position="topleft">
+        <LayersControl.Overlay checked name="Custom Tile Layer">
+          <TileLayer attribution={props.attribution} url={props.url} />
+        </LayersControl.Overlay>
+        <LayersControl.Overlay name="OpenTopoMap Tile Layer">
+          <TileLayer
+            attribution="map data: © <a href='https://openstreetmap.org/copyright'>OpenStreetMap</a> contributors, SRTM | map style: © <a href='https://opentopomap.org'>OpenTopoMap</a> (CC-BY-SA)"
+            url="https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png"
+          />
+        </LayersControl.Overlay>
+        <LayersControl.Overlay name="Esri WorldImagery Tile Layer">
+          <TileLayer
+            attribution="mTiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community"
+            url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+          />
+        </LayersControl.Overlay>
+        <LayersControl.Overlay name="Google Maps Satelite Tile Layer">
+          <TileLayer
+            attribution="mTiles &copy; Google &mdash; Source: Google Maps"
+            url="https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}"
+          />
+        </LayersControl.Overlay>
+        <LayersControl.Overlay name="OpenStreetMap Tile Layer">
+          <TileLayer
+            attribution="map data: © <a href='https://openstreetmap.org/copyright'>OpenStreetMap</a> contributors"
+            opacity={0.75}
+            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          />
+        </LayersControl.Overlay>
         <LayersControl.Overlay checked name="Marker with popup">
           {Array.isArray(props.markers) &&
             props.markers.map((marker: MarkerProps, index: number) => (
