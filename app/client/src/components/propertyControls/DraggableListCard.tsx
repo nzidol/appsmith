@@ -166,7 +166,7 @@ export function DraggableListCard(props: RenderComponentProps) {
         onFocus={onFocus}
         placeholder={placeholder}
         ref={ref}
-        rightPadding={
+        rightpadding={
           showCheckbox ? PADDING_WITH_CHECKBOX : PADDING_WITHOUT_CHECKBOX
         }
         value={value}

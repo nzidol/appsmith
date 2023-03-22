@@ -54,9 +54,9 @@ const AddColumnButton = styled(StyledPropertyPaneButton)`
   }
 `;
 
-const EdtiableCheckboxWrapper = styled.div<{ rightPadding: boolean | null }>`
+const EdtiableCheckboxWrapper = styled.div<{ rightpadding: boolean | null }>`
   position: relative;
-  ${(props) => props.rightPadding && `right: 6px;`}
+  ${(props) => props.rightpadding && `right: 6px;`}
 `;
 
 interface ReduxStateProps {
@@ -226,7 +226,7 @@ class PrimaryColumnsControlV2 extends BaseControl<ControlProps, State> {
           {this.state.hasEditableColumn && (
             <EdtiableCheckboxWrapper
               className="flex t--uber-editable-checkbox"
-              rightPadding={this.state.hasScrollableList}
+              rightpadding={this.state.hasScrollableList}
             >
               <span className="mr-2">Editable</span>
               <Checkbox

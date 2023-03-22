@@ -339,11 +339,11 @@ export const StyledPropertyPaneButton = styled(Button)`
 `;
 
 export const StyledOptionControlInputGroup = styled(StyledInputGroup)<{
-  rightPadding: number;
+  rightpadding: number;
 }>`
   width: 100%;
   padding-left: 20px;
-  padding-right: ${(props) => props.rightPadding}px;
+  padding-right: ${(props) => props.rightpadding}px;
   padding-bottom: 4px;
   text-overflow: ellipsis;
   background: inherit;
