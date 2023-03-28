@@ -19,6 +19,7 @@ import {
   FeatureGroup,
   useMap,
   TileLayerProps,
+  ZoomControl,
 } from "react-leaflet";
 
 import markerIconPng from "leaflet/dist/images/marker-icon.png";
@@ -173,7 +174,9 @@ const MyLeafLetComponent = (props: any) => {
   }, [props.center, props.selectedMarker]);
 
   const _created = (e: any) => console.log(e);
+
   const [map, setMap] = useState<L.Map>();
+
   const [mapBounds, setmapBounds] = useState(props.mapBounds);
   useEffect(() => {
     if (map) {
@@ -193,7 +196,7 @@ const MyLeafLetComponent = (props: any) => {
       <LayersControl position="topleft">
         {Array.isArray(props.tileLayers) &&
           props.tileLayers.map((tyleLayer: TyleLayerProps, index: number) => (
-            <LayersControl.Overlay
+            <LayersControl.BaseLayer
               checked={tyleLayer.name === "OpenStreetMaps"}
               key={index}
               name={tyleLayer.name}
@@ -201,12 +204,24 @@ const MyLeafLetComponent = (props: any) => {
               <TileLayer
                 attribution={tyleLayer.attribution}
                 key={index}
-                maxZoom={tyleLayer.maxZoom ? tyleLayer.maxZoom : 18}
+                maxNativeZoom={
+                  tyleLayer.maxNativeZoom ? tyleLayer.maxNativeZoom : 18
+                }
+                maxZoom={tyleLayer.maxZoom ? tyleLayer.maxZoom : 22}
                 opacity={tyleLayer.opacity}
                 url={tyleLayer.url}
               />
-            </LayersControl.Overlay>
+            </LayersControl.BaseLayer>
           ))}
+        <LayersControl.Overlay checked name="OpenStreetMap">
+          <TileLayer
+            attribution="&copy; <a href='https://www.openstreetmap.org/copyright'>OpenStreetMap</a> contributors"
+            maxNativeZoom={18}
+            maxZoom={22}
+            opacity={0.65}
+            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          />
+        </LayersControl.Overlay>
         <LayersControl.Overlay checked name="Marker with popup">
           {Array.isArray(props.markers) &&
             props.markers.map((marker: MarkerProps, index: number) => (
@@ -312,6 +327,7 @@ const MyLeafLetComponent = (props: any) => {
             ))}
         </LayersControl.Overlay>
       </LayersControl>
+      <ZoomControl position="topleft" />
     </MapContainer>
   );
 };

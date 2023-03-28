@@ -41,5 +41,6 @@ export interface TyleLayerProps {
   url: string;
   attribution: string;
   opacity: number;
+  maxNativeZoom: number;
   maxZoom: number;
 }
