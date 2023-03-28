@@ -24,7 +24,7 @@ import {
 
 import markerIconPng from "leaflet/dist/images/marker-icon.png";
 import markerShadowPng from "leaflet/dist/images/marker-shadow.png";
-import { Icon, LatLngBounds, LatLngExpression } from "leaflet";
+import { icon, Icon, LatLngBounds, LatLngExpression } from "leaflet";
 const L = window["L"];
 import {
   CircleProps,
@@ -313,6 +313,15 @@ const MyLeafLetComponent = (props: any) => {
               <GeoJSON
                 data={geoJSON.data}
                 key={index}
+                pointToLayer={function(geoJsonPoint, latlng) {
+                  const myIcon = L.icon({
+                    iconUrl: markerIconPng,
+                    shadowUrl: markerShadowPng,
+                    iconSize: [25, 41],
+                    iconAnchor: [12, 41],
+                  });
+                  return L.marker(latlng, { icon: myIcon });
+                }}
                 style={
                   geoJSON.style
                     ? geoJSON.style
