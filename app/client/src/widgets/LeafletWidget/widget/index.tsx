@@ -10,6 +10,7 @@ import { MarkerProps } from "../constants";
 import styleConfig from "./styleConfig";
 import contentConfig from "./contentConfig";
 import { Stylesheet } from "entities/AppTheming";
+import { LatLngBounds } from "leaflet";
 
 const DefaultCenter = { ...DEFAULT_CENTER, long: DEFAULT_CENTER.lng };
 
@@ -34,7 +35,6 @@ class LeafletWidget extends BaseWidget<LeafletWidgetProps, WidgetState> {
     return {
       markers: "defaultMarkers",
       center: "mapCenter",
-      tiles: "url",
     };
   }
   static getMetaPropertiesMap(): Record<string, any> {
@@ -42,6 +42,7 @@ class LeafletWidget extends BaseWidget<LeafletWidgetProps, WidgetState> {
       center: undefined,
       markers: undefined,
       selectedMarker: undefined,
+      mapBounds: undefined,
     };
   }
   static getDerivedPropertiesMap(): DerivedPropertiesMap {
@@ -147,6 +148,16 @@ class LeafletWidget extends BaseWidget<LeafletWidgetProps, WidgetState> {
         this.props.markers[this.props.markers.length - 1],
       );
     }
+
+    // If map or zoom was changed
+    if (
+      JSON.stringify(prevProps.mapCenter) !==
+        JSON.stringify(this.props.mapCenter) ||
+      JSON.stringify(prevProps.zoom) !== JSON.stringify(this.props.zoom)
+    ) {
+      this.props.updateWidgetMetaProperty("mapBounds", this.props.mapBounds);
+      return;
+    }
   }
 
   getPageView() {
@@ -168,6 +179,7 @@ class LeafletWidget extends BaseWidget<LeafletWidgetProps, WidgetState> {
         lat={this.props.lat}
         lines={this.props.lines}
         long={this.props.long}
+        mapBounds={this.props.mapBounds}
         mapCenter={this.getCenter()}
         markerText={this.props.markerText}
         markers={this.props.markers}
@@ -175,6 +187,7 @@ class LeafletWidget extends BaseWidget<LeafletWidgetProps, WidgetState> {
         saveMarker={this.onCreateMarker}
         selectMarker={this.onMarkerClick}
         selectedMarker={this.props.selectedMarker}
+        tileLayers={this.props.tileLayers}
         unselectMarker={this.unselectMarker}
         updateCenter={this.updateCenter}
         updateMarker={this.updateMarker}
@@ -199,6 +212,7 @@ export interface LeafletWidgetProps extends WidgetProps {
   url: string;
   allowZoom: boolean;
   markerText: string;
+  mapBounds: LatLngBounds;
   mapCenter: {
     lat: number;
     long: number;

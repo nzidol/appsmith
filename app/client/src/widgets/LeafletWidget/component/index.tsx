@@ -2,7 +2,7 @@ import { Colors } from "constants/Colors";
 import React, { useEffect, useMemo, useState } from "react";
 import styled from "styled-components";
 import "leaflet/dist/leaflet.css";
-import "leaflet-draw/dist/leaflet.draw.css";
+import { GeomanControl } from "./GeomanControl";
 
 import {
   MapContainer,
@@ -18,18 +18,19 @@ import {
   LayersControl,
   FeatureGroup,
   useMap,
+  TileLayerProps,
 } from "react-leaflet";
 
-import { EditControl } from "react-leaflet-draw";
 import markerIconPng from "leaflet/dist/images/marker-icon.png";
 import markerShadowPng from "leaflet/dist/images/marker-shadow.png";
-import { Icon, LatLngExpression } from "leaflet";
+import { Icon, LatLngBounds, LatLngExpression } from "leaflet";
 const L = window["L"];
 import {
   CircleProps,
   MarkerProps,
   PolygonProps,
   LineProps,
+  TyleLayerProps,
 } from "../constants";
 
 export interface LeafletComponentProps {
@@ -47,6 +48,7 @@ export interface LeafletComponentProps {
     long: number;
     title?: string;
   };
+  mapBounds: LatLngBounds;
   center?: {
     lat: number;
     long: number;
@@ -57,6 +59,7 @@ export interface LeafletComponentProps {
   circles?: Array<CircleProps>;
   lines?: Array<LineProps>;
   polygons?: Array<PolygonProps>;
+  tileLayers?: Array<TileLayerProps>;
   selectedMarker?: {
     lat: number;
     long: number;
@@ -170,12 +173,13 @@ const MyLeafLetComponent = (props: any) => {
   }, [props.center, props.selectedMarker]);
 
   const _created = (e: any) => console.log(e);
-
-  function GetBounds() {
-    const map = useMap();
-    console.log("map bounds", map.getBounds());
-    return null;
-  }
+  const [map, setMap] = useState<L.Map>();
+  const [mapBounds, setmapBounds] = useState(props.mapBounds);
+  useEffect(() => {
+    if (map) {
+      setmapBounds(map.getBounds());
+    }
+  }, [map]);
 
   return (
     <MapContainer
@@ -185,43 +189,24 @@ const MyLeafLetComponent = (props: any) => {
       zoom={props.zoom}
       zoomControl={props.allowZoom}
     >
-      <GetBounds />
-      <FeatureGroup>
-        <EditControl
-          draw={{ marker: false }}
-          onCreated={_created}
-          position="topright"
-        />
-      </FeatureGroup>
+      <GeomanControl drawCircle={false} oneBlock position="topright" />
       <LayersControl position="topleft">
-        <LayersControl.Overlay checked name="Custom Tile Layer">
-          <TileLayer attribution={props.attribution} url={props.url} />
-        </LayersControl.Overlay>
-        <LayersControl.Overlay name="OpenTopoMap Tile Layer">
-          <TileLayer
-            attribution="map data: © <a href='https://openstreetmap.org/copyright'>OpenStreetMap</a> contributors, SRTM | map style: © <a href='https://opentopomap.org'>OpenTopoMap</a> (CC-BY-SA)"
-            url="https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png"
-          />
-        </LayersControl.Overlay>
-        <LayersControl.Overlay name="Esri WorldImagery Tile Layer">
-          <TileLayer
-            attribution="mTiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community"
-            url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
-          />
-        </LayersControl.Overlay>
-        <LayersControl.Overlay name="Google Maps Satelite Tile Layer">
-          <TileLayer
-            attribution="mTiles &copy; Google &mdash; Source: Google Maps"
-            url="https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}"
-          />
-        </LayersControl.Overlay>
-        <LayersControl.Overlay name="OpenStreetMap Tile Layer">
-          <TileLayer
-            attribution="map data: © <a href='https://openstreetmap.org/copyright'>OpenStreetMap</a> contributors"
-            opacity={0.75}
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          />
-        </LayersControl.Overlay>
+        {Array.isArray(props.tileLayers) &&
+          props.tileLayers.map((tyleLayer: TyleLayerProps, index: number) => (
+            <LayersControl.Overlay
+              checked={tyleLayer.name === "OpenStreetMaps"}
+              key={index}
+              name={tyleLayer.name}
+            >
+              <TileLayer
+                attribution={tyleLayer.attribution}
+                key={index}
+                maxZoom={tyleLayer.maxZoom ? tyleLayer.maxZoom : 18}
+                opacity={tyleLayer.opacity}
+                url={tyleLayer.url}
+              />
+            </LayersControl.Overlay>
+          ))}
         <LayersControl.Overlay checked name="Marker with popup">
           {Array.isArray(props.markers) &&
             props.markers.map((marker: MarkerProps, index: number) => (
@@ -255,7 +240,7 @@ const MyLeafLetComponent = (props: any) => {
                 <Popup>{marker.popupText}</Popup>
               </Marker>
             ))}
-          <AddMarker {...props} />
+          {/* <AddMarker {...props} /> */}
         </LayersControl.Overlay>
         <LayersControl.Overlay checked name="Circles">
           {Array.isArray(props.circles) &&

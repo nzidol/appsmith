@@ -6,34 +6,78 @@ export default [
     sectionName: "General",
     children: [
       {
-        propertyName: "url",
-        label: "URL for Tile Layer",
-        helpText: "Url for maptiles, ensure you comply with any usage policy.",
-        controlType: "INPUT_TEXT",
-        defaultValue: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-        placeholderText: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-        isBindProperty: true,
-        isTriggerProperty: false,
-        isJSconvertible: true,
-      },
-      {
-        propertyName: "attribution",
-        label: "Attribution",
+        propertyName: "tileLayers",
+        label: "Array of Tile Layers",
         helpText:
-          "It is a moral duty of data users to give credit where credit is due.",
+          "Url and attribution for maptiles, ensure you comply with any usage policy.",
         controlType: "INPUT_TEXT",
+        inputType: "ARRAY",
         defaultValue:
-          "&copy; <a href='https://www.openstreetmap.org/copyright'>OpenStreetMap</a> contributors",
+          '[{ "name": "OpenStreetMaps" ,"url": "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", "attribution": "&copy; <a href=`https://www.openstreetmap.org/copyright`>OpenStreetMap</a> contributors", "opacity": 1 }]',
         placeholderText:
-          "&copy; <a href='https://www.openstreetmap.org/copyright'>OpenStreetMap</a> contributors",
+          '[{ "name": "val1" ,"url": "val2", "attribution": "val3", "opacity": 1 }]',
         isBindProperty: true,
         isTriggerProperty: false,
         isJSconvertible: true,
+        validation: {
+          type: ValidationTypes.ARRAY,
+          params: {
+            children: {
+              type: ValidationTypes.OBJECT,
+              params: {
+                required: true,
+                allowedKeys: [
+                  {
+                    name: "name",
+                    type: ValidationTypes.TEXT,
+                    params: {
+                      required: true,
+                    },
+                  },
+                  {
+                    name: "url",
+                    type: ValidationTypes.SAFE_URL,
+                    params: {
+                      required: true,
+                    },
+                  },
+                  {
+                    name: "attribution",
+                    type: ValidationTypes.TEXT,
+                    params: {
+                      required: true,
+                    },
+                  },
+                  {
+                    name: "opacity",
+                    type: ValidationTypes.NUMBER,
+                    params: {
+                      default: 1,
+                      max: 1,
+                      min: 0,
+                      required: false,
+                    },
+                  },
+                  {
+                    name: "maxZoom",
+                    type: ValidationTypes.NUMBER,
+                    params: {
+                      default: 18,
+                      max: 25,
+                      min: 1,
+                      required: false,
+                    },
+                  },
+                ],
+              },
+            },
+          },
+        },
+        evaluationSubstitutionType: EvaluationSubstitutionType.SMART_SUBSTITUTE,
       },
       {
         propertyName: "mapCenter",
         label: "Initial location",
-        isJSConvertible: true,
         controlType: "INPUT_TEXT",
         defaultValue: { lat: 51.505, long: -0.09 },
         placeholderText: '{ "lat": 51.505, "long": -0.09 }',

@@ -36,3 +36,10 @@ export interface LineOptions {
   color?: string;
   fillColor?: string;
 }
+export interface TyleLayerProps {
+  name: string
+  url: string;
+  attribution: string;
+  opacity: number;
+  maxZoom: number;
+}
