@@ -11,6 +11,7 @@ import styleConfig from "./styleConfig";
 import contentConfig from "./contentConfig";
 import { Stylesheet } from "entities/AppTheming";
 import { LatLngBounds } from "leaflet";
+import { merge } from "lodash";
 
 const DefaultCenter = { ...DEFAULT_CENTER, long: DEFAULT_CENTER.lng };
 
@@ -31,22 +32,26 @@ class LeafletWidget extends BaseWidget<LeafletWidgetProps, WidgetState> {
     return styleConfig;
   }
 
+  static getDerivedPropertiesMap(): DerivedPropertiesMap {
+    return merge(super.getDerivedPropertiesMap(), {
+      mapBounds: `{{(() => {L.Map.getBounds()})()}}`,
+    });
+  }
+
   static getDefaultPropertiesMap(): Record<string, string> {
     return {
-      markers: "defaultMarkers",
       center: "mapCenter",
+      markers: "defaultMarkers",
     };
   }
+
   static getMetaPropertiesMap(): Record<string, any> {
-    return {
+    return merge(super.getMetaPropertiesMap(), {
       center: undefined,
       markers: undefined,
       selectedMarker: undefined,
       mapBounds: undefined,
-    };
-  }
-  static getDerivedPropertiesMap(): DerivedPropertiesMap {
-    return {};
+    });
   }
 
   static getStylesheetConfig(): Stylesheet {
@@ -117,6 +122,9 @@ class LeafletWidget extends BaseWidget<LeafletWidgetProps, WidgetState> {
     );
     this.disableDrag(false);
     this.props.updateWidgetMetaProperty("markers", markers);
+  };
+  updateBounds = (mapBounds: LatLngBounds) => {
+    this.props.updateWidgetMetaProperty("mapBounds", mapBounds);
   };
 
   componentDidUpdate(prevProps: LeafletWidgetProps) {
@@ -189,6 +197,7 @@ class LeafletWidget extends BaseWidget<LeafletWidgetProps, WidgetState> {
         selectedMarker={this.props.selectedMarker}
         tileLayers={this.props.tileLayers}
         unselectMarker={this.unselectMarker}
+        updateBounds={this.updateBounds}
         updateCenter={this.updateCenter}
         updateMarker={this.updateMarker}
         url={this.props.url}

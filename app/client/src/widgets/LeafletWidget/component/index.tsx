@@ -16,15 +16,13 @@ import {
   GeoJSON,
   GeoJSONProps,
   LayersControl,
-  FeatureGroup,
-  useMap,
   TileLayerProps,
   ZoomControl,
 } from "react-leaflet";
 
 import markerIconPng from "leaflet/dist/images/marker-icon.png";
 import markerShadowPng from "leaflet/dist/images/marker-shadow.png";
-import { icon, Icon, LatLngBounds, LatLngExpression } from "leaflet";
+import { Icon, LatLngBounds, LatLngExpression } from "leaflet";
 const L = window["L"];
 import {
   CircleProps,
@@ -74,6 +72,7 @@ export interface LeafletComponentProps {
   clickedMarkerCentered?: boolean;
   updateCenter: (lat: number, long: number) => void;
   updateMarker: (lat: number, long: number, index: number) => void;
+  updateBounds: (mapBounds: LatLngBounds) => void;
   saveMarker: (lat: number, long: number, title: string) => void;
   selectMarker: (lat: number, long: number, title: string) => void;
   unselectMarker: () => void;
@@ -162,6 +161,7 @@ const MyLeafLetComponent = (props: any) => {
     ...props.center,
     lng: props.center.long,
   });
+
   useEffect(() => {
     if (!props.selectedMarker) {
       setMapCenter({
@@ -173,7 +173,42 @@ const MyLeafLetComponent = (props: any) => {
     }
   }, [props.center, props.selectedMarker]);
 
-  const _created = (e: any) => console.log(e);
+  function _onCreate(e: any) {
+    const fg = L.featureGroup();
+    if (
+      e.layer instanceof L.Path ||
+      e.layer instanceof L.Marker ||
+      e.layer instanceof L.Polygon
+    ) {
+      fg.addLayer(e.layer);
+    }
+    console.log(fg.toGeoJSON());
+    console.log("Create: " + e.shape);
+  }
+  function _onDelete(e: any) {
+    const fg = L.featureGroup();
+    if (
+      e.layer instanceof L.Path ||
+      e.layer instanceof L.Marker ||
+      e.layer instanceof L.Polygon
+    ) {
+      fg.addLayer(e.layer);
+    }
+    console.log(fg.toGeoJSON());
+    console.log("Delete " + e.shape);
+  }
+  function _onEdit(e: any) {
+    const fg = L.featureGroup();
+    if (
+      e.layer instanceof L.Path ||
+      e.layer instanceof L.Marker ||
+      e.layer instanceof L.Polygon
+    ) {
+      fg.addLayer(e.layer);
+    }
+    console.log(fg.toGeoJSON());
+    console.log("Edit " + e.shape);
+  }
 
   const [map, setMap] = useState<L.Map>();
 
@@ -182,9 +217,12 @@ const MyLeafLetComponent = (props: any) => {
     if (map) {
       setmapBounds(map.getBounds());
     }
-  }, [map]);
-
-  return (
+  }, [props.center, props.zoom]);
+  console.log("mapCenter: " + JSON.stringify(mapCenter));
+  return JSON.stringify(mapCenter) === "{}" ||
+    JSON.stringify(mapCenter) === '{"title":"","description":""}' ? (
+    <p>Waiting for data</p>
+  ) : (
     <MapContainer
       center={mapCenter}
       scrollWheelZoom
@@ -192,7 +230,19 @@ const MyLeafLetComponent = (props: any) => {
       zoom={props.zoom}
       zoomControl={props.allowZoom}
     >
-      <GeomanControl drawCircle={false} oneBlock position="topright" />
+      <GeomanControl
+        cutPolygon={false}
+        dragMode={false}
+        drawCircle={false}
+        drawCircleMarker={false}
+        drawText={false}
+        onCreate={_onCreate}
+        onDelete={_onDelete}
+        onEdit={_onEdit}
+        oneBlock
+        position="topright"
+        rotateMode={false}
+      />
       <LayersControl position="topleft">
         {Array.isArray(props.tileLayers) &&
           props.tileLayers.map((tyleLayer: TyleLayerProps, index: number) => (
