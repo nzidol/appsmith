@@ -1,24 +1,66 @@
 import { ValidationTypes } from "constants/WidgetValidation";
 import { EvaluationSubstitutionType } from "entities/DataTree/dataTreeFactory";
+import { LeafletComponentProps } from "../component";
 
 export default [
   {
     sectionName: "General",
     children: [
       {
+        propertyName: "enableOpenStreetMapLayer",
+        label: "Use OpenStreetMap as a layer",
+        helpText:
+          "Use OSM on top of a base map, like satelite or contour maps.",
+        controlType: "SWITCH",
+        default: true,
+        isBindProperty: false,
+        isTriggerProperty: false,
+      },
+      {
+        propertyName: "osmOpacity",
+        label: "OSM Opacity",
+        helpText:
+          "Opacity level of OSM map, such that you can see the basemap underneath.",
+        defaultValue: 60,
+        placeholderText: "60",
+        controlType: "INPUT_TEXT",
+        isBindProperty: true,
+        isTriggerProperty: false,
+        isJSconvertible: true,
+        validation: {
+          type: ValidationTypes.NUMBER,
+          params: {
+            min: 0,
+            max: 100,
+            default: 60,
+          },
+        },
+      },
+      {
+        propertyName: "enableTileLayers",
+        label: "Add baselayers to the map",
+        helpText:
+          "Allow selection of base layer behind the map, like satelite or contour maps",
+        controlType: "SWITCH",
+        isBindProperty: false,
+        isTriggerProperty: false,
+      },
+      {
         propertyName: "tileLayers",
-        label: "Array of Tile Layers",
+        label: "Array of Layers",
         helpText:
           "Url and attribution for maptiles, ensure you comply with any usage policy.",
         controlType: "INPUT_TEXT",
         inputType: "ARRAY",
         defaultValue:
-          '[{ "name": "OpenStreetMaps" ,"url": "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", "attribution": "&copy; <a href=`https://www.openstreetmap.org/copyright`>OpenStreetMap</a> contributors", "opacity": 1 }]',
+          '[{ "name": "OpenStreetMaps" ,"url": "https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png", "attribution": "Kartendarstellung: © <a href=`https://www.opentopomap.org/about#verwendung`>OpenTopoMap</a> (CC-BY-SA)", "opacity": 1 }]',
         placeholderText:
           '[{ "name": "val1" ,"url": "val2", "attribution": "val3", "opacity": 1 }]',
         isBindProperty: true,
         isTriggerProperty: false,
         isJSconvertible: true,
+        hidden: (props: LeafletComponentProps) => !props.enableTileLayers,
+        dependencies: ["enableTileLayers"],
         validation: {
           type: ValidationTypes.ARRAY,
           params: {
@@ -183,6 +225,16 @@ export default [
         controlType: "SWITCH",
         isBindProperty: false,
         isTriggerProperty: false,
+        isJSConvertible: false,
+      },
+      {
+        propertyName: "enableCircles",
+        label: "Put circles in map",
+        helpText:
+          "Allows users to mark locations on the map with a circle. (Note not supported in GeoJson)",
+        controlType: "SWITCH",
+        isBindProperty: false,
+        isTriggerProperty: false,
       },
       {
         propertyName: "circles",
@@ -196,6 +248,8 @@ export default [
           '[{ ["lat": "val1", "long": "val2"], "options:"{"radius":"val3"}}]',
         isBindProperty: true,
         isTriggerProperty: false,
+        hidden: (props: LeafletComponentProps) => !props.enableCircles,
+        dependencies: ["enableCircles"],
         validation: {
           type: ValidationTypes.ARRAY,
           params: {
@@ -260,6 +314,14 @@ export default [
         evaluationSubstitutionType: EvaluationSubstitutionType.SMART_SUBSTITUTE,
       },
       {
+        propertyName: "enableLines",
+        label: "Put (poly-)lines in map",
+        helpText: "Allows users to draw polylines on the map.",
+        controlType: "SWITCH",
+        isBindProperty: false,
+        isTriggerProperty: false,
+      },
+      {
         propertyName: "lines",
         label: "Lines to draw on Map",
         controlType: "INPUT_TEXT",
@@ -271,6 +333,8 @@ export default [
           '[{"positions":[["val1","val2"],[]...], "options:"{"color":"val3","fillColor":"val4", "title":"val5"}}]',
         isBindProperty: true,
         isTriggerProperty: false,
+        hidden: (props: LeafletComponentProps) => !props.enableLines,
+        dependencies: ["enableLines"],
         validation: {
           type: ValidationTypes.ARRAY,
           params: {

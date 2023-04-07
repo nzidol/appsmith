@@ -36,6 +36,8 @@ export interface LeafletComponentProps {
   lat: number;
   long: number;
   zoom: number;
+  enableOpenStreetMapLayer?: boolean;
+  osmOpacity?: number;
   attribution: string;
   url: string;
   markerText: string;
@@ -52,12 +54,19 @@ export interface LeafletComponentProps {
     lat: number;
     long: number;
   };
+  enableDefaultMarkers?: boolean;
   defaultMarkers?: Array<MarkerProps>;
+  enableGeoJSON?: boolean;
   geoJSON?: Array<GeoJSONProps>;
+  enableMarkers?: boolean;
   markers?: Array<MarkerProps>;
+  enableCircles?: boolean;
   circles?: Array<CircleProps>;
+  enableLines?: boolean;
   lines?: Array<LineProps>;
+  enablePolygons?: boolean;
   polygons?: Array<PolygonProps>;
+  enableTileLayers?: boolean;
   tileLayers?: Array<TileLayerProps>;
   selectedMarker?: {
     lat: number;

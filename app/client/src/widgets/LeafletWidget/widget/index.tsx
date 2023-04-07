@@ -179,8 +179,11 @@ class LeafletWidget extends BaseWidget<LeafletWidgetProps, WidgetState> {
         circles={this.props.circles}
         clickedMarkerCentered={this.props.clickedMarkerCentered}
         defaultMarkers={this.props.defaultMarkers}
+        enableCircles={this.props.enableCircles}
         enableCreateMarker={this.props.enableCreateMarker}
         enableDrag={this.props.enableDrag}
+        enableLines={this.props.enableLines}
+        enableOpenStreetMapLayer={this.props.enableOpenStreetMapLayer}
         enablePickLocation={false}
         enableReplaceMarker={this.props.enableReplaceMarker}
         geoJSON={this.props.geoJSON}
@@ -192,6 +195,7 @@ class LeafletWidget extends BaseWidget<LeafletWidgetProps, WidgetState> {
         markerText={this.props.markerText}
         markers={this.props.markers}
         polygons={this.props.polygons}
+        osmOpacity={this.props.osmOpacity}
         saveMarker={this.onCreateMarker}
         selectMarker={this.onMarkerClick}
         selectedMarker={this.props.selectedMarker}
@@ -215,6 +219,14 @@ class LeafletWidget extends BaseWidget<LeafletWidgetProps, WidgetState> {
 export interface LeafletWidgetProps extends WidgetProps {
   isDisabled?: boolean;
   isVisible?: boolean;
+  enableCircles?: boolean;
+  enableLines?: boolean;
+  enableMarkers?: boolean;
+  enablePolygons?: boolean;
+  enableDefaultMarkers?: boolean;
+  enableTileLayers?: boolean;
+  enableOpenStreetMapLayer?: boolean;
+  osmOpacity?: number;
   lat: number;
   long: number;
   zoom: number;
