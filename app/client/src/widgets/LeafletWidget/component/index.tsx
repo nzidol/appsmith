@@ -18,6 +18,7 @@ import {
   LayersControl,
   TileLayerProps,
   ZoomControl,
+  useMap,
 } from "react-leaflet";
 
 import markerIconPng from "leaflet/dist/images/marker-icon.png";
@@ -35,15 +36,14 @@ import {
 export interface LeafletComponentProps {
   lat: number;
   long: number;
-  zoom: number;
-  enableOpenStreetMapLayer?: boolean;
-  osmOpacity?: number;
-  attribution: string;
-  url: string;
-  markerText: string;
-  enableDrag: (e: any) => void;
   allowZoom: boolean;
-  enablePickLocation: boolean;
+  defaultZoom: boolean;
+  zoom: number;
+  enableMapLayer?: boolean;
+  url: string;
+  attribution: string;
+  mapOpacity?: number;
+  markerText: string;
   mapCenter: {
     lat: number;
     long: number;
@@ -54,8 +54,7 @@ export interface LeafletComponentProps {
     lat: number;
     long: number;
   };
-  enableDefaultMarkers?: boolean;
-  defaultMarkers?: Array<MarkerProps>;
+  //Feature Layers
   enableGeoJSON?: boolean;
   geoJSON?: Array<GeoJSONProps>;
   enableMarkers?: boolean;
@@ -68,6 +67,11 @@ export interface LeafletComponentProps {
   polygons?: Array<PolygonProps>;
   enableTileLayers?: boolean;
   tileLayers?: Array<TileLayerProps>;
+
+  enableDrag: (e: any) => void;
+  enablePickLocation: boolean;
+  enableDefaultMarkers?: boolean;
+  defaultMarkers?: Array<MarkerProps>;
   selectedMarker?: {
     lat: number;
     long: number;
@@ -79,12 +83,14 @@ export interface LeafletComponentProps {
   enableCreateMarker: boolean;
   enableReplaceMarker: boolean;
   clickedMarkerCentered?: boolean;
-  updateCenter: (lat: number, long: number) => void;
-  updateMarker: (lat: number, long: number, index: number) => void;
-  updateBounds: (mapBounds: LatLngBounds) => void;
   saveMarker: (lat: number, long: number, title: string) => void;
   selectMarker: (lat: number, long: number, title: string) => void;
   unselectMarker: () => void;
+
+  updateCenter: (lat: number, long: number) => void;
+  updateMarker: (lat: number, long: number, index: number) => void;
+  updateBounds: (mapBounds: LatLngBounds) => void;
+
   borderRadius: string;
   boxShadow?: string;
   widgetId: string;
@@ -101,7 +107,6 @@ const LeafletContainerWrapper = styled.div`
   width: 100%;
   height: 100%;
 `;
-
 const LeafletWrapper = styled.div<{
   borderRadius: string;
   boxShadow?: string;
@@ -155,6 +160,10 @@ function AddMarker(props: LeafletComponentProps) {
       <Popup>{popupText}</Popup>
     </Marker>
   );
+}
+
+function MyZoomControl(allow: boolean) {
+  return allow === false ? null : <ZoomControl position="topleft" />;
 }
 
 const MyLeafLetComponent = (props: any) => {
@@ -218,16 +227,29 @@ const MyLeafLetComponent = (props: any) => {
     console.log(fg.toGeoJSON());
     console.log("Edit " + e.shape);
   }
+  const [mapBounds, setMapBounds] = React.useState(props.mapBounds);
+  // const propRef = useRef(props);
+  function MapBounds(center: any, zoom: number) {
+    const map = useMap();
 
-  const [map, setMap] = useState<L.Map>();
+    /*     useEffect(() => {
+      console.log("effects1: ", map.getBounds());
+      setMapBounds(map.getBounds());
+      propsRef.current = props;
+      }, []);
+    */
+    /*     useEffect(() => {
+      console.log("effects2: ", center, zoom);
+      if (JSON.stringify(mapBounds) !== JSON.stringify(map.getBounds())) {
+        setMapBounds(map.getBounds());
+        props.updateBounds(map.getBounds());
+      }
+    }, [center, zoom]); */
 
-  const [mapBounds, setmapBounds] = useState(props.mapBounds);
-  useEffect(() => {
-    if (map) {
-      setmapBounds(map.getBounds());
-    }
-  }, [props.center, props.zoom]);
-  console.log("mapCenter: " + JSON.stringify(mapCenter));
+    console.log("map bounds: ", map.getBounds());
+    return null;
+  }
+
   return JSON.stringify(mapCenter) === "{}" ||
     JSON.stringify(mapCenter) === '{"title":"","description":""}' ? (
     <p>Waiting for data</p>
@@ -237,8 +259,9 @@ const MyLeafLetComponent = (props: any) => {
       scrollWheelZoom
       style={{ height: "100%", width: "100%" }}
       zoom={props.zoom}
-      zoomControl={props.allowZoom}
+      zoomControl={false}
     >
+      <MapBounds center={props.center} zoom={props.zoom} />
       <GeomanControl
         cutPolygon={false}
         dragMode={false}
@@ -395,7 +418,7 @@ const MyLeafLetComponent = (props: any) => {
             ))}
         </LayersControl.Overlay>
       </LayersControl>
-      <ZoomControl position="topleft" />
+      <MyZoomControl {...props.allowZoom} />
     </MapContainer>
   );
 };

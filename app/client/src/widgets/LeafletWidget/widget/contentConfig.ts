@@ -1,32 +1,94 @@
 import { ValidationTypes } from "constants/WidgetValidation";
 import { EvaluationSubstitutionType } from "entities/DataTree/dataTreeFactory";
-import { LeafletComponentProps } from "../component";
+import { LeafletComponentProps } from "../component/index";
 
 export default [
   {
     sectionName: "General",
     children: [
       {
-        propertyName: "enableOpenStreetMapLayer",
-        label: "Use OpenStreetMap as a layer",
-        helpText:
-          "Use OSM on top of a base map, like satelite or contour maps.",
+        propertyName: "isVisible",
+        label: "Visible",
         controlType: "SWITCH",
-        default: true,
+        helpText: "Controls the visibility of the widget",
+        defaultValue: true,
+        isJSConvertible: true,
+        isBindProperty: true,
+        isTriggerProperty: false,
+        validation: { type: ValidationTypes.BOOLEAN },
+      }, //isVisible
+      {
+        propertyName: "animateLoading",
+        label: "Animate Loading",
+        controlType: "SWITCH",
+        helpText: "Controls the loading of the widget",
+        isJSConvertible: true,
+        isBindProperty: true,
+        isTriggerProperty: false,
+        validation: { type: ValidationTypes.BOOLEAN },
+      }, //animateLoading
+    ],
+  },
+  {
+    sectionName: "Maps",
+    children: [
+      {
+        propertyName: "enableMapLayer",
+        label: "Define primary map layer.",
+        helpText: "Use primary layer on top of a base map and behind features.",
+        controlType: "SWITCH",
         isBindProperty: false,
         isTriggerProperty: false,
-      },
+        validation: { type: ValidationTypes.BOOLEAN },
+      }, //enableMapLayer
       {
-        propertyName: "osmOpacity",
-        label: "OSM Opacity",
+        propertyName: "url",
+        label: "URL of primary map tiles",
+        helpText: "URL to get map tiles from.",
+        defaultValue: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+        placeholderText: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+        controlType: "INPUT_TEXT",
+        isBindProperty: false,
+        isTriggerProperty: false,
+        isJSconvertible: false,
+        hidden: (props: LeafletComponentProps) => !props.enableMapLayer,
+        dependencies: ["enableMapLayer"],
+        validation: {
+          type: ValidationTypes.SAFE_URL,
+        },
+      }, //url
+      {
+        propertyName: "attribution",
+        label: "Map attribution",
         helpText:
-          "Opacity level of OSM map, such that you can see the basemap underneath.",
+          "Attribution of primary map layer, check the requirements for map usage.",
+        defaultValue:
+          "&copy; <a href='https://www.openstreetmap.org/copyright'>OpenStreetMap</a> contributors",
+        placeholderText:
+          "&copy; <a href='https://www.openstreetmap.org/copyright'>OpenStreetMap</a> contributors",
+        controlType: "INPUT_TEXT",
+        isBindProperty: false,
+        isTriggerProperty: false,
+        isJSconvertible: false,
+        hidden: (props: LeafletComponentProps) => !props.enableMapLayer,
+        dependencies: ["enableMapLayer"],
+        validation: {
+          type: ValidationTypes.TEXT,
+        },
+      }, //attribution
+      {
+        propertyName: "mapOpacity",
+        label: "Map Opacity",
+        helpText:
+          "Opacity level of primary map layer, such that you can see the basemap underneath.",
         defaultValue: 60,
         placeholderText: "60",
         controlType: "INPUT_TEXT",
         isBindProperty: true,
         isTriggerProperty: false,
         isJSconvertible: true,
+        hidden: (props: LeafletComponentProps) => !props.enableMapLayer,
+        dependencies: ["enableMapLayer"],
         validation: {
           type: ValidationTypes.NUMBER,
           params: {
@@ -35,7 +97,38 @@ export default [
             default: 60,
           },
         },
-      },
+      }, //mapOpacity
+      {
+        propertyName: "defaultZoom",
+        label: "Show Zoom control",
+        controlType: "SWITCH",
+        helpText: "Controls the visibility of the zoom controls",
+        isBindProperty: false,
+        isTriggerProperty: false,
+        isJSconvertible: false,
+        validation: { type: ValidationTypes.BOOLEAN },
+      }, //allowZoom
+      {
+        propertyName: "zoom",
+        label: "Zoom",
+        helpText: "Zoom level of map",
+        defaultValue: 13,
+        placeholderText: "13",
+        controlType: "INPUT_TEXT",
+        hidden: (props: LeafletComponentProps) => !props.allowZoom,
+        dependencies: ["allowZoom"],
+        isBindProperty: false,
+        isTriggerProperty: false,
+        isJSconvertible: false,
+        validation: {
+          type: ValidationTypes.NUMBER,
+          params: {
+            min: 0,
+            max: 25,
+            default: 10,
+          },
+        },
+      }, //zoom
       {
         propertyName: "enableTileLayers",
         label: "Add baselayers to the map",
@@ -44,7 +137,9 @@ export default [
         controlType: "SWITCH",
         isBindProperty: false,
         isTriggerProperty: false,
-      },
+        isJSconvertible: false,
+        validation: { type: ValidationTypes.BOOLEAN },
+      }, //enableTileLayers
       {
         propertyName: "tileLayers",
         label: "Array of Layers",
@@ -53,9 +148,9 @@ export default [
         controlType: "INPUT_TEXT",
         inputType: "ARRAY",
         defaultValue:
-          '[{ "name": "OpenStreetMaps" ,"url": "https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png", "attribution": "Kartendarstellung: © <a href=`https://www.opentopomap.org/about#verwendung`>OpenTopoMap</a> (CC-BY-SA)", "opacity": 1 }]',
+          '[{ "name": "OpenTopoMap" ,"url": "https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png", "attribution": "Kartendarstellung: © <a href=`https://www.opentopomap.org/about#verwendung`>OpenTopoMap</a> (CC-BY-SA)", "opacity": 1 }]',
         placeholderText:
-          '[{ "name": "val1" ,"url": "val2", "attribution": "val3", "opacity": 1 }]',
+          '[{ "name": "val1" ,"url": "val2", "attribution": "val3", "opacity": 1, "maxZoom": 22 }]',
         isBindProperty: true,
         isTriggerProperty: false,
         isJSconvertible: true,
@@ -116,7 +211,7 @@ export default [
           },
         },
         evaluationSubstitutionType: EvaluationSubstitutionType.SMART_SUBSTITUTE,
-      },
+      }, //tileLayers
       {
         propertyName: "mapCenter",
         label: "Initial location",
@@ -153,7 +248,16 @@ export default [
             ],
           },
         },
-      },
+      }, //mapCenter
+      {
+        propertyName: "enableDefaultMarkers",
+        label: "Use Default Markers on the map",
+        helpText: "Use Default Markers on the map",
+        controlType: "SWITCH",
+        defaultValue: true,
+        isBindProperty: false,
+        isTriggerProperty: false,
+      }, //enableDefaultMarkers
       {
         propertyName: "defaultMarkers",
         label: "Default markers",
@@ -163,6 +267,8 @@ export default [
         placeholderText: '[{ "lat": "val1", "long": "val2" }]',
         isBindProperty: true,
         isTriggerProperty: false,
+        hidden: (props: LeafletComponentProps) => !props.enableDefaultMarkers,
+        dependencies: ["enableDefaultMarkers"],
         validation: {
           type: ValidationTypes.ARRAY,
           params: {
@@ -201,7 +307,17 @@ export default [
           },
         },
         evaluationSubstitutionType: EvaluationSubstitutionType.SMART_SUBSTITUTE,
-      },
+      }, //defaultMarkers
+      {
+        propertyName: "markerText",
+        label: "Marker Text",
+        helpText: "Text of marker in center of map",
+        placeholderText: "You are here",
+        controlType: "INPUT_TEXT",
+        isBindProperty: true,
+        isTriggerProperty: false,
+        isJSconvertible: true,
+      }, //markerText
       {
         propertyName: "isClickedMarkerCentered",
         label: "Map & Marker centering",
@@ -209,7 +325,7 @@ export default [
         controlType: "SWITCH",
         isBindProperty: false,
         isTriggerProperty: false,
-      },
+      }, //isClickedMarkerCentered
       {
         propertyName: "enableCreateMarker",
         label: "Create new marker",
@@ -217,7 +333,7 @@ export default [
         controlType: "SWITCH",
         isBindProperty: false,
         isTriggerProperty: false,
-      },
+      }, //enableCreateMarker
       {
         propertyName: "enableReplaceMarker",
         label: "Replace existing marker",
@@ -226,7 +342,12 @@ export default [
         isBindProperty: false,
         isTriggerProperty: false,
         isJSConvertible: false,
-      },
+      }, //enableReplaceMarker
+    ],
+  }, //Section Maps
+  {
+    sectionName: "Feature Layers",
+    children: [
       {
         propertyName: "enableCircles",
         label: "Put circles in map",
@@ -235,7 +356,7 @@ export default [
         controlType: "SWITCH",
         isBindProperty: false,
         isTriggerProperty: false,
-      },
+      }, //enableCircles
       {
         propertyName: "circles",
         label: "Circles to draw on Map",
@@ -312,7 +433,7 @@ export default [
           },
         },
         evaluationSubstitutionType: EvaluationSubstitutionType.SMART_SUBSTITUTE,
-      },
+      }, //circles
       {
         propertyName: "enableLines",
         label: "Put (poly-)lines in map",
@@ -320,7 +441,7 @@ export default [
         controlType: "SWITCH",
         isBindProperty: false,
         isTriggerProperty: false,
-      },
+      }, //enableLines
       {
         propertyName: "lines",
         label: "Lines to draw on Map",
@@ -366,7 +487,15 @@ export default [
           },
         },
         evaluationSubstitutionType: EvaluationSubstitutionType.SMART_SUBSTITUTE,
-      },
+      }, //lines
+      {
+        propertyName: "enablePolygons",
+        label: "Put Polygons in map",
+        helpText: "Draw Polygons on the map.",
+        controlType: "SWITCH",
+        isBindProperty: false,
+        isTriggerProperty: false,
+      }, //enablePolygons
       {
         propertyName: "polygons",
         label: "Polygons to draw on Map",
@@ -379,6 +508,8 @@ export default [
           '[{"positions":[["val1","val2"], []...], "options:"{"color":"val3"}}]',
         isBindProperty: true,
         isTriggerProperty: false,
+        hidden: (props: LeafletComponentProps) => !props.enablePolygons,
+        dependencies: ["enablePolygons"],
         validation: {
           type: ValidationTypes.ARRAY,
           params: {
@@ -418,7 +549,15 @@ export default [
           },
         },
         evaluationSubstitutionType: EvaluationSubstitutionType.SMART_SUBSTITUTE,
-      },
+      }, //polygons
+      {
+        propertyName: "enableGeoJSON",
+        label: "Put GeoJSON features on the map",
+        helpText: "Put GeoJSON features on the map",
+        controlType: "SWITCH",
+        isBindProperty: false,
+        isTriggerProperty: false,
+      }, //enableGeoJSON
       {
         propertyName: "geoJSON",
         label: "GeoJSON features to draw on Map",
@@ -431,6 +570,8 @@ export default [
           '[{"data":[["val1","val2"], []...], "style:"{() => ({color: "val", weight: "val", fillColor: "val", fillOpacity: "val" })}}]',
         isBindProperty: true,
         isTriggerProperty: false,
+        hidden: (props: LeafletComponentProps) => !props.enableGeoJSON,
+        dependencies: ["enableGeoJSON"],
         validation: {
           type: ValidationTypes.ARRAY,
           params: {
@@ -476,70 +617,9 @@ export default [
           },
         },
         evaluationSubstitutionType: EvaluationSubstitutionType.SMART_SUBSTITUTE,
-      },
-      {
-        propertyName: "isVisible",
-        label: "Visible",
-        helpText: "Controls the visibility of the widget",
-        controlType: "SWITCH",
-        isJSConvertible: true,
-        isBindProperty: true,
-        isTriggerProperty: false,
-        validation: { type: ValidationTypes.BOOLEAN },
-      },
-      {
-        propertyName: "animateLoading",
-        label: "Animate Loading",
-        controlType: "SWITCH",
-        helpText: "Controls the loading of the widget",
-        defaultValue: true,
-        isJSConvertible: true,
-        isBindProperty: true,
-        isTriggerProperty: false,
-        validation: { type: ValidationTypes.BOOLEAN },
-      },
-      {
-        propertyName: "allowZoom",
-        label: "Show Zoom control",
-        controlType: "SWITCH",
-        helpText: "Controls the visibility of the zoom controls",
-        defaultValue: true,
-        isJSConvertible: true,
-        isBindProperty: true,
-        isTriggerProperty: false,
-        validation: { type: ValidationTypes.BOOLEAN },
-      },
-      {
-        propertyName: "zoom",
-        label: "Zoom",
-        helpText: "Zoom level of map",
-        defaultValue: 13,
-        placeholderText: "13",
-        controlType: "INPUT_TEXT",
-        isBindProperty: true,
-        isTriggerProperty: false,
-        isJSconvertible: true,
-        validation: {
-          type: ValidationTypes.NUMBER,
-          params: {
-            min: 0,
-            max: 25,
-            default: 10,
-          },
-        },
-      },
-      {
-        propertyName: "markerText",
-        label: "Marker Text",
-        helpText: "Text of marker in center of map",
-        placeholderText: "You are here",
-        controlType: "INPUT_TEXT",
-        isBindProperty: true,
-        isTriggerProperty: false,
-        isJSconvertible: true,
-      },
+      }, //geoJSON
     ],
-  },
+  }, //Section Feature Layers
   {
     sectionName: "Events",
     children: [
@@ -559,6 +639,30 @@ export default [
         isBindProperty: true,
         isTriggerProperty: true,
       },
+      {
+        propertyName: "onCreate",
+        label: "When Creating a Feature",
+        controlType: "ACTION_SELECTOR",
+        isJSConvertible: true,
+        isBindProperty: true,
+        isTriggerProperty: true,
+      },
+      {
+        propertyName: "onEdit",
+        label: "When editing a feature",
+        controlType: "ACTION_SELECTOR",
+        isJSConvertible: true,
+        isBindProperty: true,
+        isTriggerProperty: true,
+      },
+      {
+        propertyName: "onDelete",
+        label: "When deleting a feature",
+        controlType: "ACTION_SELECTOR",
+        isJSConvertible: true,
+        isBindProperty: true,
+        isTriggerProperty: true,
+      },
     ],
-  },
+  }, //section Events
 ];

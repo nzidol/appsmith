@@ -125,7 +125,7 @@ function ContainerComponentWrapper(
       className={`${
         props.shouldScrollContents ? getCanvasClassName() : ""
       } ${generateClassName(props.widgetId)} container-with-scrollbar`}
-      data-widgetId={props.widgetId}
+      data-widgetid={props.widgetId}
       dropDisabled={props.dropDisabled}
       onClick={props.onClick}
       onClickCapture={props.onClickCapture}

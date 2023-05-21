@@ -30,12 +30,15 @@ const Geoman = L.Control.extend({
 
   addTo(map: L.Map) {
     if (!map.pm) return;
-
+    map.off("pm:create");
     map.on("pm:create", (e) => {
       this.options.onCreate(e);
       const layer = e.layer;
       map.pm.disableDraw();
-
+      // Clear events to ensure there is only 1 listener
+      layer.off("pm:edit");
+      layer.off("pm:update");
+      layer.off("pm:remove");
       layer.on("pm:edit", this.options.onEdit.bind(e));
       layer.on("pm:update", this.options.onEdit.bind(e));
       layer.on("pm:remove", this.options.onDelete.bind(e));

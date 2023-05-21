@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import BaseWidget, { WidgetProps, WidgetState } from "widgets/BaseWidget";
 import { WidgetType } from "constants/WidgetConstants";
 import LeafletComponent from "../component";
@@ -34,7 +34,7 @@ class LeafletWidget extends BaseWidget<LeafletWidgetProps, WidgetState> {
 
   static getDerivedPropertiesMap(): DerivedPropertiesMap {
     return merge(super.getDerivedPropertiesMap(), {
-      mapBounds: `{{(() => {L.Map.getBounds()})()}}`,
+      mapBounds: `{{(() => {map.getBounds()})()}}`,
     });
   }
 
@@ -42,6 +42,7 @@ class LeafletWidget extends BaseWidget<LeafletWidgetProps, WidgetState> {
     return {
       center: "mapCenter",
       markers: "defaultMarkers",
+      allowZoom: "defaultZoom",
     };
   }
 
@@ -110,6 +111,7 @@ class LeafletWidget extends BaseWidget<LeafletWidgetProps, WidgetState> {
   };
   updateCenter = (lat: number, long: number, title?: string) => {
     this.props.updateWidgetMetaProperty("center", { lat, long, title });
+    this.props.updateWidgetMetaProperty("mapBounds", this.props.mapBounds);
   };
   updateMarker = (lat: number, long: number, index: number) => {
     const markers: Array<MarkerProps> = [...(this.props.markers || [])].map(
@@ -124,7 +126,7 @@ class LeafletWidget extends BaseWidget<LeafletWidgetProps, WidgetState> {
     this.props.updateWidgetMetaProperty("markers", markers);
   };
   updateBounds = (mapBounds: LatLngBounds) => {
-    this.props.updateWidgetMetaProperty("mapBounds", mapBounds);
+    this.props.updateWidgetMetaProperty("mapBounds", this.props.mapBounds);
   };
 
   componentDidUpdate(prevProps: LeafletWidgetProps) {
@@ -167,7 +169,6 @@ class LeafletWidget extends BaseWidget<LeafletWidgetProps, WidgetState> {
       return;
     }
   }
-
   getPageView() {
     return (
       <LeafletComponent
@@ -179,11 +180,12 @@ class LeafletWidget extends BaseWidget<LeafletWidgetProps, WidgetState> {
         circles={this.props.circles}
         clickedMarkerCentered={this.props.clickedMarkerCentered}
         defaultMarkers={this.props.defaultMarkers}
+        defaultZoom={this.props.allowZoom}
         enableCircles={this.props.enableCircles}
         enableCreateMarker={this.props.enableCreateMarker}
         enableDrag={this.props.enableDrag}
         enableLines={this.props.enableLines}
-        enableOpenStreetMapLayer={this.props.enableOpenStreetMapLayer}
+        enableMapLayer={this.props.enableMapLayer}
         enablePickLocation={false}
         enableReplaceMarker={this.props.enableReplaceMarker}
         geoJSON={this.props.geoJSON}
@@ -192,10 +194,10 @@ class LeafletWidget extends BaseWidget<LeafletWidgetProps, WidgetState> {
         long={this.props.long}
         mapBounds={this.props.mapBounds}
         mapCenter={this.getCenter()}
+        mapOpacity={this.props.mapOpacity}
         markerText={this.props.markerText}
         markers={this.props.markers}
         polygons={this.props.polygons}
-        osmOpacity={this.props.osmOpacity}
         saveMarker={this.onCreateMarker}
         selectMarker={this.onMarkerClick}
         selectedMarker={this.props.selectedMarker}
@@ -225,13 +227,15 @@ export interface LeafletWidgetProps extends WidgetProps {
   enablePolygons?: boolean;
   enableDefaultMarkers?: boolean;
   enableTileLayers?: boolean;
-  enableOpenStreetMapLayer?: boolean;
-  osmOpacity?: number;
+  enableMapLayer?: boolean;
+  mapOpacity?: number;
   lat: number;
   long: number;
   zoom: number;
   url: string;
+  attribution: string;
   allowZoom: boolean;
+  defaultZoom: boolean;
   markerText: string;
   mapBounds: LatLngBounds;
   mapCenter: {

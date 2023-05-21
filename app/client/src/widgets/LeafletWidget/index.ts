@@ -10,6 +10,7 @@ export const CONFIG = {
   defaults: {
     isDisabled: false,
     isVisible: true,
+    animateLoading: true,
     widgetName: "Leaflet",
     rows: 60,
     columns: 60,
@@ -17,11 +18,19 @@ export const CONFIG = {
     mapCenter: { lat: 51.505, long: -0.09 },
     circles:
       '[{"lat": 51.505, "long": -0.0755, "radius": 200, "title":"Tower Bridge", "options": {"color":"green","fillColor":"green"}}]',
+    enableMapLayer: true,
     url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
     attribution:
       "&copy; <a href='https://www.openstreetmap.org/copyright'>OpenStreetMap</a> contributors",
     zoom: 13,
-    animateLoading: true,
+    allowZoom: true,
+    defaultZoom: true,
+    enableTileLayers: false,
+    enableDefaultMarkers: false,
+    enableCircles: true,
+    enableLines: false,
+    enablePolygons: false,
+    enableGeoJSON: false,
   },
   properties: {
     derived: Widget.getDerivedPropertiesMap(),
