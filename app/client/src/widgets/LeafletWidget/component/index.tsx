@@ -101,8 +101,8 @@ function AddMarker(props: LeafletComponentProps) {
   );
 }
 
-function MyZoomControl(allow: boolean) {
-  return allow === false ? null : <ZoomControl position="topleft" />;
+function MyZoomControl(props: LeafletComponentProps) {
+  return props.allowZoom === false ? null : <ZoomControl position="topleft" />;
 }
 
 const MyLeafLetComponent = (props: any) => {
@@ -118,7 +118,6 @@ const MyLeafLetComponent = (props: any) => {
     ...props.center,
     lng: props.center.long,
   });
-
   useEffect(() => {
     if (!props.selectedMarker) {
       setMapCenter({
@@ -183,24 +182,18 @@ const MyLeafLetComponent = (props: any) => {
     console.log("Edit " + e.shape);
   }
   const [mapBounds, setMapBounds] = React.useState(props.mapBounds);
-  // const propRef = useRef(props);
   function MapBounds(center: any, zoom: number) {
     const map = useMap();
 
-    /*     useEffect(() => {
-      console.log("effects1: ", map.getBounds());
-      setMapBounds(map.getBounds());
-      propsRef.current = props;
-      }, []);
-    */
     useEffect(() => {
       console.log("effects2: ", center, zoom);
       if (JSON.stringify(mapBounds) !== JSON.stringify(map.getBounds())) {
         setMapBounds(map.getBounds());
-        props.updateBounds(map.getBounds());
+        console.log("map bounds: ", mapBounds);
+        props.updateBounds(mapBounds);
       }
     }, [center, zoom]);
-    console.log("map bounds: ", map.getBounds());
+
     return null;
   }
 
@@ -372,7 +365,7 @@ const MyLeafLetComponent = (props: any) => {
             ))}
         </LayersControl.Overlay>
       </LayersControl>
-      <MyZoomControl {...props.allowZoom} />
+      <MyZoomControl {...props} />
     </MapContainer>
   );
 };

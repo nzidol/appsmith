@@ -99,7 +99,7 @@ export default [
         },
       }, //mapOpacity
       {
-        propertyName: "defaultZoom",
+        propertyName: "allowZoom",
         label: "Show Zoom control",
         controlType: "SWITCH",
         helpText: "Controls the visibility of the zoom controls",
