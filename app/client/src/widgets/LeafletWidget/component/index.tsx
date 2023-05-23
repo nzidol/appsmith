@@ -23,7 +23,7 @@ import {
 
 import markerIconPng from "leaflet/dist/images/marker-icon.png";
 import markerShadowPng from "leaflet/dist/images/marker-shadow.png";
-import { Icon, LatLngBounds, LatLngExpression } from "leaflet";
+import { ControlPosition, Icon, LatLngBounds, LatLngExpression } from "leaflet";
 const L = window["L"];
 import {
   CircleProps,
@@ -102,7 +102,9 @@ function AddMarker(props: LeafletComponentProps) {
 }
 
 function MyZoomControl(props: LeafletComponentProps) {
-  return props.allowZoom === false ? null : <ZoomControl position="topleft" />;
+  return props.allowZoom === false ? null : (
+    <ZoomControl position={props.zoomLocation as ControlPosition} />
+  );
 }
 
 const MyLeafLetComponent = (props: any) => {
@@ -209,6 +211,7 @@ const MyLeafLetComponent = (props: any) => {
       zoomControl={false}
     >
       <MapBounds center={props.center} zoom={props.zoom} />
+      <MyZoomControl {...props} />
       <GeomanControl
         cutPolygon={false}
         dragMode={false}
@@ -365,7 +368,6 @@ const MyLeafLetComponent = (props: any) => {
             ))}
         </LayersControl.Overlay>
       </LayersControl>
-      <MyZoomControl {...props} />
     </MapContainer>
   );
 };

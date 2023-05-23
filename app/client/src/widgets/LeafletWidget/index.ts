@@ -23,6 +23,7 @@ export const CONFIG = {
     attribution:
       "&copy; <a href='https://www.openstreetmap.org/copyright'>OpenStreetMap</a> contributors",
     zoom: 13,
+    zoomLocation: "topleft",
     allowZoom: true,
     defaultZoom: true,
     enableTileLayers: false,

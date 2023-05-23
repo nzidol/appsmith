@@ -15,10 +15,11 @@ export default interface LeafletWidgetProps extends WidgetProps {
     mapOpacity?: number;
     lat: number;
     long: number;
+    allowZoom: boolean;
     zoom: number;
+    zoomLocation: string;
     url: string;
     attribution: string;
-    allowZoom: boolean;
     markerText: string;
     mapBounds: LatLngBounds;
     mapCenter: {

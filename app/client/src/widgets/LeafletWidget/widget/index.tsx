@@ -208,6 +208,7 @@ class LeafletWidget extends BaseWidget<LeafletWidgetProps, WidgetState> {
         url={this.props.url}
         widgetId={this.props.widgetId}
         zoom={this.props.zoom}
+        zoomLocation={this.props.zoomLocation}
       />
     );
   }

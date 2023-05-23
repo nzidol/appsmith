@@ -130,6 +130,36 @@ export default [
         },
       }, //zoom
       {
+        propertyName: "zoomLocation",
+        label: "Location of Zoom control",
+        controlType: "DROP_DOWN",
+        options: [
+          {
+            label: "Top Left",
+            value: "topleft",
+          },
+          {
+            label: "Top Right",
+            value: "topright",
+          },
+          {
+            label: "Bottom Left",
+            value: "bottomleft",
+          },
+          {
+            label: "Bottom Right",
+            value: "bottomright",
+          },
+        ],
+        defaultValue: "topleft",
+        helpText: "Controls the location of the zoom controls",
+        hidden: (props: LeafletComponentProps) => !props.allowZoom,
+        dependencies: ["allowZoom"],
+        isBindProperty: false,
+        isTriggerProperty: false,
+        isJSconvertible: false,
+      }, //zoomLocation
+      {
         propertyName: "enableTileLayers",
         label: "Add baselayers to the map",
         helpText:
