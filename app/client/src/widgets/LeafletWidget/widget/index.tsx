@@ -12,6 +12,7 @@ import contentConfig from "./contentConfig";
 import { Stylesheet } from "entities/AppTheming";
 import { LatLngBounds } from "leaflet";
 import { merge } from "lodash";
+import LeafletWidgetProps from "./interface";
 
 const DefaultCenter = { ...DEFAULT_CENTER, long: DEFAULT_CENTER.lng };
 
@@ -42,7 +43,6 @@ class LeafletWidget extends BaseWidget<LeafletWidgetProps, WidgetState> {
     return {
       center: "mapCenter",
       markers: "defaultMarkers",
-      allowZoom: "defaultZoom",
     };
   }
 
@@ -180,7 +180,6 @@ class LeafletWidget extends BaseWidget<LeafletWidgetProps, WidgetState> {
         circles={this.props.circles}
         clickedMarkerCentered={this.props.clickedMarkerCentered}
         defaultMarkers={this.props.defaultMarkers}
-        defaultZoom={this.props.allowZoom}
         enableCircles={this.props.enableCircles}
         enableCreateMarker={this.props.enableCreateMarker}
         enableDrag={this.props.enableDrag}
@@ -216,49 +215,6 @@ class LeafletWidget extends BaseWidget<LeafletWidgetProps, WidgetState> {
   static getWidgetType(): WidgetType {
     return "LEAFLET_WIDGET";
   }
-}
-
-export interface LeafletWidgetProps extends WidgetProps {
-  isDisabled?: boolean;
-  isVisible?: boolean;
-  enableCircles?: boolean;
-  enableLines?: boolean;
-  enableMarkers?: boolean;
-  enablePolygons?: boolean;
-  enableDefaultMarkers?: boolean;
-  enableTileLayers?: boolean;
-  enableMapLayer?: boolean;
-  mapOpacity?: number;
-  lat: number;
-  long: number;
-  zoom: number;
-  url: string;
-  attribution: string;
-  allowZoom: boolean;
-  defaultZoom: boolean;
-  markerText: string;
-  mapBounds: LatLngBounds;
-  mapCenter: {
-    lat: number;
-    long: number;
-    title?: string;
-  };
-  center?: {
-    lat: number;
-    long: number;
-  };
-  defaultMarkers?: Array<MarkerProps>;
-  markers?: Array<MarkerProps>;
-  selectedMarker?: {
-    lat: number;
-    long: number;
-    title?: string;
-    color?: string;
-  };
-  onMarkerClick?: string;
-  onCreateMarker?: string;
-  borderRadius: string;
-  boxShadow?: string;
 }
 
 export default LeafletWidget;

@@ -1,5 +1,5 @@
 import { Colors } from "constants/Colors";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import styled from "styled-components";
 import "leaflet/dist/leaflet.css";
 import { GeomanControl } from "./GeomanControl";
@@ -33,68 +33,7 @@ import {
   TyleLayerProps,
 } from "../constants";
 
-export interface LeafletComponentProps {
-  lat: number;
-  long: number;
-  allowZoom: boolean;
-  defaultZoom: boolean;
-  zoom: number;
-  enableMapLayer?: boolean;
-  url: string;
-  attribution: string;
-  mapOpacity?: number;
-  markerText: string;
-  mapCenter: {
-    lat: number;
-    long: number;
-    title?: string;
-  };
-  mapBounds: LatLngBounds;
-  center?: {
-    lat: number;
-    long: number;
-  };
-  //Feature Layers
-  enableGeoJSON?: boolean;
-  geoJSON?: Array<GeoJSONProps>;
-  enableMarkers?: boolean;
-  markers?: Array<MarkerProps>;
-  enableCircles?: boolean;
-  circles?: Array<CircleProps>;
-  enableLines?: boolean;
-  lines?: Array<LineProps>;
-  enablePolygons?: boolean;
-  polygons?: Array<PolygonProps>;
-  enableTileLayers?: boolean;
-  tileLayers?: Array<TileLayerProps>;
-
-  enableDrag: (e: any) => void;
-  enablePickLocation: boolean;
-  enableDefaultMarkers?: boolean;
-  defaultMarkers?: Array<MarkerProps>;
-  selectedMarker?: {
-    lat: number;
-    long: number;
-    title?: string;
-    color?: string;
-  };
-  onMarkerClick?: string;
-  onCreateMarker?: string;
-  enableCreateMarker: boolean;
-  enableReplaceMarker: boolean;
-  clickedMarkerCentered?: boolean;
-  saveMarker: (lat: number, long: number, title: string) => void;
-  selectMarker: (lat: number, long: number, title: string) => void;
-  unselectMarker: () => void;
-
-  updateCenter: (lat: number, long: number) => void;
-  updateMarker: (lat: number, long: number, index: number) => void;
-  updateBounds: (mapBounds: LatLngBounds) => void;
-
-  borderRadius: string;
-  boxShadow?: string;
-  widgetId: string;
-}
+import LeafletComponentProps from "./interface";
 
 L.Icon.Default.prototype.options = {
   iconUrl: markerIconPng,
@@ -191,6 +130,22 @@ const MyLeafLetComponent = (props: any) => {
     }
   }, [props.center, props.selectedMarker]);
 
+  const [map, setMap] = useState<L.Map>();
+  const mapRef = useRef<HTMLDivElement>(null);
+  // initialize the map instance
+  useEffect(() => {
+    if (!mapRef.current) return;
+
+    setMap(new window.L.Map(mapRef.current, {}));
+  }, [mapRef]);
+
+  // set center if center is changed
+  useEffect(() => {
+    if (map) {
+      map.setView({ lat: props.center?.lat, lng: props.center?.lng });
+    }
+  }, [props.center, map]);
+
   function _onCreate(e: any) {
     const fg = L.featureGroup();
     if (
@@ -238,14 +193,13 @@ const MyLeafLetComponent = (props: any) => {
       propsRef.current = props;
       }, []);
     */
-    /*     useEffect(() => {
+    useEffect(() => {
       console.log("effects2: ", center, zoom);
       if (JSON.stringify(mapBounds) !== JSON.stringify(map.getBounds())) {
         setMapBounds(map.getBounds());
         props.updateBounds(map.getBounds());
       }
-    }, [center, zoom]); */
-
+    }, [center, zoom]);
     console.log("map bounds: ", map.getBounds());
     return null;
   }

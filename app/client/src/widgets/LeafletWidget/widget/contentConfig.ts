@@ -1,6 +1,6 @@
 import { ValidationTypes } from "constants/WidgetValidation";
 import { EvaluationSubstitutionType } from "entities/DataTree/dataTreeFactory";
-import { LeafletComponentProps } from "../component/index";
+import LeafletComponentProps from "../component/interface";
 
 export default [
   {
