@@ -18,6 +18,8 @@ export default interface LeafletComponentProps {
     allowZoom: boolean;
     zoom: number;
     zoomLocation: string;
+    allowDraw: boolean;
+    drawLocation: string;
     enableMapLayer?: boolean;
     url: string;
     attribution: string;

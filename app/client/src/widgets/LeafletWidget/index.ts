@@ -15,7 +15,7 @@ export const CONFIG = {
     rows: 60,
     columns: 60,
     version: 1,
-    mapCenter: { lat: 51.505, long: -0.09 },
+    mapCenter: { lat: 51.505, long: -0.08 },
     circles:
       '[{"lat": 51.505, "long": -0.0755, "radius": 200, "title":"Tower Bridge", "options": {"color":"green","fillColor":"green"}}]',
     enableMapLayer: true,
@@ -25,6 +25,8 @@ export const CONFIG = {
     zoom: 13,
     zoomLocation: "topleft",
     allowZoom: true,
+    drawLocation: "topright",
+    allowDraw: true,
     defaultZoom: true,
     enableTileLayers: false,
     enableDefaultMarkers: false,

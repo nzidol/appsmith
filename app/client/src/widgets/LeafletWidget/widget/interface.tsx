@@ -18,6 +18,8 @@ export default interface LeafletWidgetProps extends WidgetProps {
     allowZoom: boolean;
     zoom: number;
     zoomLocation: string;
+    allowDraw: boolean;
+    drawLocation: string;
     url: string;
     attribution: string;
     markerText: string;

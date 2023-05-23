@@ -651,6 +651,51 @@ export default [
     ],
   }, //Section Feature Layers
   {
+    sectionName: "Draw Control",
+    children: [
+      {
+        propertyName: "allowDraw",
+        label: "Show Draw control",
+        controlType: "SWITCH",
+        helpText: "Controls the visibility of the draw controls",
+        isBindProperty: false,
+        isTriggerProperty: false,
+        isJSconvertible: false,
+        validation: { type: ValidationTypes.BOOLEAN },
+      }, //allowDraw
+      {
+        propertyName: "drawLocation",
+        label: "Location of Draw control",
+        controlType: "DROP_DOWN",
+        options: [
+          {
+            label: "Top Left",
+            value: "topleft",
+          },
+          {
+            label: "Top Right",
+            value: "topright",
+          },
+          {
+            label: "Bottom Left",
+            value: "bottomleft",
+          },
+          {
+            label: "Bottom Right",
+            value: "bottomright",
+          },
+        ],
+        defaultValue: "topleft",
+        helpText: "Controls the location of the draw controls",
+        hidden: (props: LeafletComponentProps) => !props.allowDraw,
+        dependencies: ["allowDraw"],
+        isBindProperty: false,
+        isTriggerProperty: false,
+        isJSconvertible: false,
+      }, //drawLocation
+    ],
+  },
+  {
     sectionName: "Events",
     children: [
       {

@@ -101,9 +101,64 @@ function AddMarker(props: LeafletComponentProps) {
   );
 }
 
+function _onCreate(e: any) {
+  const fg = L.featureGroup();
+  if (
+    e.layer instanceof L.Path ||
+    e.layer instanceof L.Marker ||
+    e.layer instanceof L.Polygon
+  ) {
+    fg.addLayer(e.layer);
+  }
+  console.log(fg.toGeoJSON());
+  console.log("Create: " + e.shape);
+}
+function _onDelete(e: any) {
+  const fg = L.featureGroup();
+  if (
+    e.layer instanceof L.Path ||
+    e.layer instanceof L.Marker ||
+    e.layer instanceof L.Polygon
+  ) {
+    fg.addLayer(e.layer);
+  }
+  console.log(fg.toGeoJSON());
+  console.log("Delete " + e.shape);
+}
+function _onEdit(e: any) {
+  const fg = L.featureGroup();
+  if (
+    e.layer instanceof L.Path ||
+    e.layer instanceof L.Marker ||
+    e.layer instanceof L.Polygon
+  ) {
+    fg.addLayer(e.layer);
+  }
+  console.log(fg.toGeoJSON());
+  console.log("Edit " + e.shape);
+}
+
 function MyZoomControl(props: LeafletComponentProps) {
   return props.allowZoom === false ? null : (
     <ZoomControl position={props.zoomLocation as ControlPosition} />
+  );
+}
+
+function MyDrawControl(props: LeafletComponentProps) {
+  return props.allowDraw === false ? null : (
+    <GeomanControl
+      cutPolygon={false}
+      dragMode={false}
+      drawCircle={false}
+      drawCircleMarker={false}
+      drawText={false}
+      onCreate={_onCreate}
+      onDelete={_onDelete}
+      onEdit={_onEdit}
+      oneBlock
+      position={props.drawLocation as ControlPosition}
+      rotateMode={false}
+    />
   );
 }
 
@@ -147,42 +202,6 @@ const MyLeafLetComponent = (props: any) => {
     }
   }, [props.center, map]);
 
-  function _onCreate(e: any) {
-    const fg = L.featureGroup();
-    if (
-      e.layer instanceof L.Path ||
-      e.layer instanceof L.Marker ||
-      e.layer instanceof L.Polygon
-    ) {
-      fg.addLayer(e.layer);
-    }
-    console.log(fg.toGeoJSON());
-    console.log("Create: " + e.shape);
-  }
-  function _onDelete(e: any) {
-    const fg = L.featureGroup();
-    if (
-      e.layer instanceof L.Path ||
-      e.layer instanceof L.Marker ||
-      e.layer instanceof L.Polygon
-    ) {
-      fg.addLayer(e.layer);
-    }
-    console.log(fg.toGeoJSON());
-    console.log("Delete " + e.shape);
-  }
-  function _onEdit(e: any) {
-    const fg = L.featureGroup();
-    if (
-      e.layer instanceof L.Path ||
-      e.layer instanceof L.Marker ||
-      e.layer instanceof L.Polygon
-    ) {
-      fg.addLayer(e.layer);
-    }
-    console.log(fg.toGeoJSON());
-    console.log("Edit " + e.shape);
-  }
   const [mapBounds, setMapBounds] = React.useState(props.mapBounds);
   function MapBounds(center: any, zoom: number) {
     const map = useMap();
@@ -212,19 +231,7 @@ const MyLeafLetComponent = (props: any) => {
     >
       <MapBounds center={props.center} zoom={props.zoom} />
       <MyZoomControl {...props} />
-      <GeomanControl
-        cutPolygon={false}
-        dragMode={false}
-        drawCircle={false}
-        drawCircleMarker={false}
-        drawText={false}
-        onCreate={_onCreate}
-        onDelete={_onDelete}
-        onEdit={_onEdit}
-        oneBlock
-        position="topright"
-        rotateMode={false}
-      />
+      <MyDrawControl {...props} />
       <LayersControl position="topleft">
         {Array.isArray(props.tileLayers) &&
           props.tileLayers.map((tyleLayer: TyleLayerProps, index: number) => (

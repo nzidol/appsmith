@@ -172,6 +172,7 @@ class LeafletWidget extends BaseWidget<LeafletWidgetProps, WidgetState> {
   getPageView() {
     return (
       <LeafletComponent
+        allowDraw={this.props.allowDraw}
         allowZoom={this.props.allowZoom}
         attribution={this.props.attribution}
         borderRadius={this.props.borderRadius}
@@ -180,6 +181,7 @@ class LeafletWidget extends BaseWidget<LeafletWidgetProps, WidgetState> {
         circles={this.props.circles}
         clickedMarkerCentered={this.props.clickedMarkerCentered}
         defaultMarkers={this.props.defaultMarkers}
+        drawLocation={this.props.drawLocation}
         enableCircles={this.props.enableCircles}
         enableCreateMarker={this.props.enableCreateMarker}
         enableDrag={this.props.enableDrag}
